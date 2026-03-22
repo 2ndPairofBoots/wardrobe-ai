@@ -11,10 +11,10 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick" | "disabled" | "children">;
 
 const variantClasses: Record<ButtonProps["variant"], string> = {
-  primary: "bg-primary text-text-primary hover:bg-primary-hover",
-  secondary: "bg-surface text-text-primary border border-border hover:bg-border",
-  ghost: "bg-transparent text-text-secondary hover:bg-surface hover:text-text-primary",
-  danger: "bg-danger text-text-primary hover:opacity-90",
+  primary: "bg-primary text-[#fff6e8] hover:bg-primary-hover",
+  secondary: "bg-white text-text-primary border border-border hover:bg-[#f5ece0]",
+  ghost: "bg-transparent text-text-secondary hover:bg-white/70 hover:text-text-primary",
+  danger: "bg-danger text-[#fff6e8] hover:opacity-90",
 };
 
 const sizeClasses: Record<ButtonProps["size"], string> = {
@@ -47,7 +47,7 @@ export function Button({
       onClick={onClick}
       disabled={isDisabled}
       className={[
-        "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors",
+        "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-300",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:cursor-not-allowed disabled:opacity-60",
         variantClasses[variant],

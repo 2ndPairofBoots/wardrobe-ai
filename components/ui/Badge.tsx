@@ -6,10 +6,10 @@ type BadgeProps = {
 };
 
 const variantClasses: Record<BadgeProps["variant"], string> = {
-  default: "bg-surface text-text-secondary border border-border",
-  success: "bg-success/15 text-success border border-success/30",
-  warning: "bg-warning/15 text-warning border border-warning/30",
-  danger: "bg-danger/15 text-danger border border-danger/30",
+  default: "bg-white text-text-secondary border border-border",
+  success: "bg-success/10 text-success border border-success/35",
+  warning: "bg-warning/10 text-warning border border-warning/35",
+  danger: "bg-danger/10 text-danger border border-danger/35",
 };
 
 export function Badge({ variant, children }: BadgeProps) {

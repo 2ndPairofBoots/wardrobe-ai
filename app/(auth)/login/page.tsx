@@ -39,8 +39,13 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10 text-text-primary">
-      <div className="mx-auto w-full max-w-md rounded-xl border border-border bg-surface p-6">
+    <main className="relative min-h-screen overflow-hidden bg-background px-4 py-10 text-text-primary">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-14 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#f9c784]/30 blur-3xl" />
+        <div className="absolute bottom-[-6rem] right-[-3rem] h-64 w-64 rounded-full bg-[#8ab0ab]/20 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
         <h1 className="text-2xl font-semibold">Log in</h1>
         <p className="mt-2 text-sm text-text-secondary">Access your wardrobe account.</p>
 
@@ -65,7 +70,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               name="email"
               type="email"
               required
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
             />
           </div>
           <div>
@@ -77,7 +82,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               name="password"
               type="password"
               required
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
             />
           </div>
           <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
