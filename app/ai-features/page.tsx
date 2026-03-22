@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicHeader } from "@/components/site/PublicHeader";
 
 const featureBlocks = [
   {
@@ -48,6 +49,8 @@ export default function AIFeaturesPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-12 sm:px-8 lg:px-10">
+        <PublicHeader />
+
         <header className="rounded-2xl border border-[#1f1b16]/10 bg-white/75 p-6 backdrop-blur sm:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">AI Features</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Built for practical wardrobe intelligence</h1>

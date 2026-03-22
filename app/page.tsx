@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { PublicHeader } from "@/components/site/PublicHeader";
 
 type LandingWeather = {
   locationLabel: string;
@@ -55,7 +56,7 @@ const footerGroups = [
       { href: "#highlights", label: "Highlights" },
       { href: "#how-it-works", label: "How it works" },
       { href: "/ai-features", label: "AI features" },
-      { href: "/report", label: "Report" },
+      { href: "/report", label: "Report issue" },
       { href: "/pricing", label: "Pricing" },
       { href: "/signup", label: "Get started" },
     ],
@@ -145,52 +146,7 @@ export default function Home() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-8 sm:px-8 lg:px-10">
-        <header className="sticky top-4 z-20 flex items-center justify-between rounded-full border border-[#1f1b16]/10 bg-white/80 px-4 py-2 backdrop-blur sm:px-6">
-          <Link href="/" className="font-semibold tracking-tight text-[#1f1b16]">
-            WardrobeAI
-          </Link>
-          <nav className="hidden items-center gap-1 text-sm md:flex">
-            <Link
-              href="#highlights"
-              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-            >
-              Highlights
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-            >
-              How it works
-            </Link>
-            <Link
-              href="/pricing"
-              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/report"
-              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-            >
-              Report
-            </Link>
-            <Link href="/login" className="rounded-full px-4 py-2 text-[#3b342d] transition hover:bg-white">
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-full bg-[#1f1b16] px-4 py-2 font-medium text-[#fff6e8] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2f2922]"
-            >
-              Start free
-            </Link>
-          </nav>
-          <Link
-            href="/signup"
-            className="rounded-full bg-[#1f1b16] px-4 py-2 text-sm font-medium text-[#fff6e8] transition duration-300 hover:bg-[#2f2922] md:hidden"
-          >
-            Start
-          </Link>
-        </header>
+        <PublicHeader showLandingAnchors />
 
         <section className="grid items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:pb-24">
           <div className="motion-safe:animate-fade-up">

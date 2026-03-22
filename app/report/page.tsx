@@ -1,39 +1,75 @@
+"use client";
+
 import Link from "next/link";
+import { FormEvent, useMemo, useState } from "react";
+import { PublicHeader } from "@/components/site/PublicHeader";
 
-const insightCards = [
-  {
-    title: "Closet utilization",
-    value: "68%",
-    detail: "of your wardrobe was worn in the last 60 days",
-  },
-  {
-    title: "Cost-per-wear trend",
-    value: "-23%",
-    detail: "average cost-per-wear dropped this quarter",
-  },
-  {
-    title: "Outfit repeat confidence",
-    value: "4.2/5",
-    detail: "users rate repeated looks as intentional, not repetitive",
-  },
-];
+type ReportFormState = {
+  name: string;
+  email: string;
+  category: string;
+  pageUrl: string;
+  message: string;
+  reproSteps: string;
+};
 
-const sections = [
-  {
-    title: "Wear frequency heatmap",
-    description: "Visualize which categories are overused, underused, or ignored, so you can rebalance your closet intentionally.",
-  },
-  {
-    title: "Gap and overlap analysis",
-    description: "AI flags where your wardrobe has too many similar pieces and where your outfit-building flexibility is weak.",
-  },
-  {
-    title: "Seasonal readiness score",
-    description: "Get a proactive score for upcoming weather shifts based on what you already own and what you actually wear.",
-  },
-];
+const initialForm: ReportFormState = {
+  name: "",
+  email: "",
+  category: "Bug",
+  pageUrl: "",
+  message: "",
+  reproSteps: "",
+};
+
+const issueCategories = ["Bug", "UI/UX", "Account", "Performance", "Feature request", "Other"];
 
 export default function ReportPage() {
+  const [form, setForm] = useState<ReportFormState>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successId, setSuccessId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const messageRemaining = useMemo(() => Math.max(0, 15 - form.message.trim().length), [form.message]);
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    setSuccessId(null);
+
+    try {
+      const response = await fetch("/api/report-issue", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          category: form.category,
+          page_url: form.pageUrl,
+          message: form.message,
+          repro_steps: form.reproSteps,
+        }),
+      });
+
+      const payload = (await response.json()) as { issue_id?: string; error?: string };
+
+      if (!response.ok) {
+        setError(payload.error ?? "Unable to submit issue right now.");
+        return;
+      }
+
+      setSuccessId(payload.issue_id ?? "");
+      setForm(initialForm);
+    } catch {
+      setError("Network issue while submitting. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f6f2e9] text-[#1f1b16]">
       <div className="pointer-events-none absolute inset-0">
@@ -42,54 +78,139 @@ export default function ReportPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-10 sm:px-8 lg:px-10">
-        <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#1f1b16]/10 bg-white/75 p-4 backdrop-blur sm:p-5">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#6a5d4f]">Wardrobe report</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Your style intelligence dashboard</h1>
-          </div>
-          <Link
-            href="/signup"
-            className="rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]"
-          >
-            Generate my report
-          </Link>
-        </header>
+        <PublicHeader />
 
-        <section className="mt-8 grid gap-4 md:grid-cols-3">
-          {insightCards.map((item) => (
-            <article key={item.title} className="rounded-2xl border border-[#1f1b16]/12 bg-white p-5 shadow-[0_20px_40px_-32px_rgba(31,27,22,0.5)]">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7b6a58]">{item.title}</p>
-              <p className="mt-2 text-3xl font-semibold tracking-tight">{item.value}</p>
-              <p className="mt-2 text-sm text-[#5d5043]">{item.detail}</p>
-            </article>
-          ))}
-        </section>
+        <section className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="rounded-3xl border border-[#1f1b16]/10 bg-white/80 p-6 shadow-[0_26px_60px_-45px_rgba(31,27,22,0.55)] backdrop-blur sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#6a5d4f]">Support</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Report an issue</h1>
+            <p className="mt-3 max-w-2xl text-sm text-[#5d5043] sm:text-base">
+              Found a bug, broken flow, or confusing behavior? Send details and we will triage it quickly.
+            </p>
 
-        <section className="mt-10 rounded-3xl border border-[#1f1b16]/12 bg-[#fff9ef] p-6 sm:p-8">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">What your report includes</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
-            {sections.map((section) => (
-              <article key={section.title} className="rounded-2xl border border-[#1f1b16]/12 bg-white p-4">
-                <h3 className="text-base font-semibold">{section.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#5d5043]">{section.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+            <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="text-sm font-medium text-[#2f2922]">
+                  Name
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                    placeholder="Your name"
+                  />
+                </label>
 
-        <section className="mt-10 rounded-3xl border border-[#1f1b16]/15 bg-[#1f1b16] p-8 text-center text-[#fff6e8] sm:p-10">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Turn data into better style decisions</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-[#f4e7d3]/90 sm:text-base">
-            WardrobeAI reports are built to help you wear more of what you own, buy less impulsively, and improve outfit confidence every week.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link href="/pricing" className="rounded-xl bg-[#fff6e8] px-5 py-3 text-sm font-semibold text-[#1f1b16] transition duration-300 hover:bg-[#fff0d8]">
-              View pricing
-            </Link>
-            <Link href="/ai-features" className="rounded-xl border border-[#fff6e8]/35 px-5 py-3 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#fff6e8]/10">
-              Explore AI features
-            </Link>
+                <label className="text-sm font-medium text-[#2f2922]">
+                  Email
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                    placeholder="you@example.com"
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="text-sm font-medium text-[#2f2922]">
+                  Category
+                  <select
+                    value={form.category}
+                    onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                  >
+                    {issueCategories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-sm font-medium text-[#2f2922]">
+                  Affected page (optional)
+                  <input
+                    type="text"
+                    value={form.pageUrl}
+                    onChange={(event) => setForm((prev) => ({ ...prev, pageUrl: event.target.value }))}
+                    className="mt-1 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                    placeholder="/wardrobe or full URL"
+                  />
+                </label>
+              </div>
+
+              <label className="block text-sm font-medium text-[#2f2922]">
+                What happened?
+                <textarea
+                  value={form.message}
+                  onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
+                  className="mt-1 min-h-28 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                  placeholder="Describe the issue and expected behavior"
+                  required
+                />
+                <span className="mt-1 block text-xs text-[#6a5d4f]">
+                  {messageRemaining > 0 ? `Please add ${messageRemaining} more characters.` : "Looks good."}
+                </span>
+              </label>
+
+              <label className="block text-sm font-medium text-[#2f2922]">
+                Reproduction steps (optional)
+                <textarea
+                  value={form.reproSteps}
+                  onChange={(event) => setForm((prev) => ({ ...prev, reproSteps: event.target.value }))}
+                  className="mt-1 min-h-24 w-full rounded-xl border border-[#1f1b16]/15 bg-white px-3 py-2 text-sm outline-none transition focus:border-[#1f1b16]/35"
+                  placeholder="1) Go to ... 2) Click ... 3) Observe ..."
+                />
+              </label>
+
+              {error ? (
+                <p className="rounded-xl border border-[#b54040]/25 bg-[#fff1f1] px-3 py-2 text-sm text-[#8c2d2d]">{error}</p>
+              ) : null}
+
+              {successId ? (
+                <p className="rounded-xl border border-[#2f6f5d]/25 bg-[#ecfbf5] px-3 py-2 text-sm text-[#1f5d4b]">
+                  Issue submitted successfully. Reference ID: <strong>{successId}</strong>
+                </p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={isSubmitting || form.message.trim().length < 15}
+                className="rounded-xl bg-[#1f1b16] px-5 py-3 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "Submitting..." : "Submit issue"}
+              </button>
+            </form>
           </div>
+
+          <aside className="space-y-4">
+            <section className="rounded-2xl border border-[#1f1b16]/12 bg-[#fff9ef] p-5">
+              <h2 className="text-lg font-semibold tracking-tight">What helps us fix faster</h2>
+              <ul className="mt-3 space-y-2 text-sm text-[#5d5043]">
+                <li>- Exact page where the issue occurred</li>
+                <li>- What you expected vs what happened</li>
+                <li>- Browser/device details when relevant</li>
+                <li>- Steps to reproduce the issue</li>
+              </ul>
+            </section>
+
+            <section className="rounded-2xl border border-[#1f1b16]/12 bg-white p-5">
+              <h2 className="text-lg font-semibold tracking-tight">Need immediate access links?</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link href="/pricing" className="rounded-lg border border-[#1f1b16]/20 px-3 py-2 text-sm font-medium text-[#1f1b16] transition hover:bg-[#f5ece0]">
+                  Pricing
+                </Link>
+                <Link href="/ai-features" className="rounded-lg border border-[#1f1b16]/20 px-3 py-2 text-sm font-medium text-[#1f1b16] transition hover:bg-[#f5ece0]">
+                  AI features
+                </Link>
+                <Link href="/signup" className="rounded-lg bg-[#1f1b16] px-3 py-2 text-sm font-medium text-[#fff6e8] transition hover:bg-[#2f2922]">
+                  Start free
+                </Link>
+              </div>
+            </section>
+          </aside>
         </section>
       </div>
     </main>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicHeader } from "@/components/site/PublicHeader";
 
 const plans = [
   {
@@ -55,7 +56,9 @@ export default function PricingPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-12 sm:px-8 lg:px-10">
-        <header className="text-center">
+        <PublicHeader />
+
+        <header className="mt-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">Pricing</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Simple pricing that stays out of your way</h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-[#5d5043] sm:text-base">
@@ -104,7 +107,7 @@ export default function PricingPage() {
           </ul>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/report" className="inline-flex rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]">
-              See sample report
+              Report an issue
             </Link>
             <Link href="/ai-features" className="inline-flex rounded-xl border border-[#1f1b16]/20 bg-white px-4 py-2 text-sm font-semibold text-[#1f1b16] transition duration-300 hover:bg-[#f5ece0]">
               Explore AI features
