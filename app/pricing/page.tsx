@@ -2,11 +2,11 @@ import Link from "next/link";
 
 const plans = [
   {
-    name: "Starter",
+    name: "Free",
     price: "$0",
-    subtitle: "For getting your closet organized",
+    subtitle: "Get organized and test the workflow",
     features: [
-      "Up to 150 wardrobe items",
+      "Up to 100 wardrobe items",
       "Basic outfit suggestions",
       "Weekly planner",
       "Weather-aware recommendations",
@@ -16,32 +16,31 @@ const plans = [
     highlighted: false,
   },
   {
-    name: "Pro",
-    price: "$12/mo",
-    subtitle: "For serious wardrobe optimization",
+    name: "Pro Monthly",
+    price: "$9/mo",
+    subtitle: "Best for active weekly usage",
     features: [
       "Unlimited wardrobe items",
-      "Advanced AI outfit engine",
-      "Cost-per-wear and utilization report",
-      "Shopping gap recommendations",
+      "Full AI outfit and shopping suggestions",
+      "Advanced report and usage insights",
       "Priority AI generations",
+      "Cancel anytime",
     ],
     cta: "Start Pro",
     href: "/signup",
     highlighted: true,
   },
   {
-    name: "Stylist+",
-    price: "$29/mo",
-    subtitle: "For coaching-level guidance",
+    name: "Pro Lifetime",
+    price: "$129 one-time",
+    subtitle: "Pay once, keep Pro forever",
     features: [
-      "Everything in Pro",
-      "Personalized style strategy",
-      "Monthly closet report with action plan",
-      "Capsule wardrobe builder",
-      "Premium support",
+      "Everything in Pro Monthly",
+      "No recurring subscription",
+      "Lifetime access to core Pro features",
+      "Perfect for long-term closet tracking",
     ],
-    cta: "Contact sales",
+    cta: "Get Lifetime",
     href: "/signup",
     highlighted: false,
   },
@@ -58,9 +57,9 @@ export default function PricingPage() {
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-12 sm:px-8 lg:px-10">
         <header className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">Pricing</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Choose the plan that fits your style goals</h1>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Simple pricing that stays out of your way</h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-[#5d5043] sm:text-base">
-            Start free, then upgrade when you want deeper analytics, richer recommendations, and stronger wardrobe strategy.
+            Start free. Upgrade monthly if you use it often, or choose one-time lifetime access if you hate subscriptions.
           </p>
         </header>
 
@@ -97,13 +96,20 @@ export default function PricingPage() {
         </section>
 
         <section className="mt-10 rounded-3xl border border-[#1f1b16]/12 bg-[#fff9ef] p-6 sm:p-8">
-          <h2 className="text-xl font-semibold tracking-tight">Need enterprise or team pricing?</h2>
-          <p className="mt-2 max-w-2xl text-sm text-[#5d5043]">
-            We offer custom plans for stylists, wardrobe consultants, and fashion teams that want shared reporting and collaborative AI workflows.
-          </p>
-          <Link href="/report" className="mt-5 inline-flex rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]">
-            See sample report
-          </Link>
+          <h2 className="text-xl font-semibold tracking-tight">Quick pricing notes</h2>
+          <ul className="mt-3 space-y-2 text-sm text-[#5d5043]">
+            <li>- Free plan is great for testing the full wardrobe flow before committing.</li>
+            <li>- Monthly is ideal if you rotate outfits weekly and want recurring AI recommendations.</li>
+            <li>- Lifetime is a one-time payment for users who want long-term value without another subscription.</li>
+          </ul>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href="/report" className="inline-flex rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]">
+              See sample report
+            </Link>
+            <Link href="/ai-features" className="inline-flex rounded-xl border border-[#1f1b16]/20 bg-white px-4 py-2 text-sm font-semibold text-[#1f1b16] transition duration-300 hover:bg-[#f5ece0]">
+              Explore AI features
+            </Link>
+          </div>
         </section>
       </div>
     </main>
