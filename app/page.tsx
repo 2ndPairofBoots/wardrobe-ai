@@ -1,17 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 
 const highlights = [
   {
     title: "Photo scan that actually tags correctly",
     description: "Turn closet photos into structured items with category, season, color, and occasion tags.",
+    image: "https://images.unsplash.com/photo-1460311516159-e389f8dd87c8?w=400&h=300&fit=crop",
   },
   {
     title: "Suggestions grounded in your real wardrobe",
     description: "Get outfit ideas from the pieces you own, filtered by weather, occasion, and style profile.",
+    image: "https://images.unsplash.com/photo-1567707476407-651cfd524e0e?w=400&h=300&fit=crop",
   },
   {
     title: "Weekly planning with less decision fatigue",
     description: "Build your week once and avoid the daily what should I wear loop every morning.",
+    image: "https://images.unsplash.com/photo-1552062407-291493fbb3f7?w=400&h=300&fit=crop",
   },
 ];
 
@@ -20,16 +26,19 @@ const flow = [
     step: "01",
     title: "Build your closet map",
     description: "Upload clothing once. WardrobeAI extracts clean metadata so your closet is searchable.",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
   },
   {
     step: "02",
     title: "Generate outfit options",
     description: "Pick an occasion and let the AI compose complete looks from your actual items.",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=300&fit=crop",
   },
   {
     step: "03",
     title: "Lock your week in minutes",
     description: "Drag suggestions into your planner so weekday mornings become autopilot.",
+    image: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=400&h=300&fit=crop",
   },
 ];
 
@@ -141,7 +150,14 @@ export default function Home() {
           </div>
 
           <div className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/15 bg-[#fff9ef] p-5 shadow-[0_25px_60px_-35px_rgba(31,27,22,0.35)] [animation-delay:120ms]">
-            <div className="rounded-xl border border-[#1f1b16]/10 bg-white p-4">
+            <Image
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=400&fit=crop"
+              alt="Organized wardrobe closet"
+              width={500}
+              height={220}
+              className="w-full rounded-xl border border-[#1f1b16]/10 object-cover"
+            />
+            <div className="rounded-xl border border-[#1f1b16]/10 bg-white p-4 mt-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5d5043]">Today</p>
               <div className="mt-3 flex items-center justify-between">
                 <p className="text-sm text-[#4f463d]">Austin, TX</p>
@@ -183,11 +199,20 @@ export default function Home() {
           {highlights.map((highlight, index) => (
             <article
               key={highlight.title}
-              className="motion-safe:animate-fade-up group rounded-2xl border border-[#1f1b16]/15 bg-white/80 p-6 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#1f1b16]/25 hover:shadow-[0_18px_40px_-28px_rgba(31,27,22,0.55)]"
+              className="motion-safe:animate-fade-up group rounded-2xl border border-[#1f1b16]/15 bg-white/80 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#1f1b16]/25 hover:shadow-[0_18px_40px_-28px_rgba(31,27,22,0.55)] overflow-hidden"
               style={{ animationDelay: `${300 + index * 120}ms` }}
             >
+              <Image
+                src={highlight.image}
+                alt={highlight.title}
+                width={400}
+                height={180}
+                className="w-full border-b border-[#1f1b16]/10 object-cover"
+              />
+              <div className="p-6">
               <h2 className="text-lg font-semibold tracking-tight transition duration-300 group-hover:text-[#2f2922]">{highlight.title}</h2>
               <p className="mt-3 text-sm leading-relaxed text-[#4f463d]">{highlight.description}</p>
+              </div>
             </article>
           ))}
         </section>
@@ -201,12 +226,21 @@ export default function Home() {
             {flow.map((item, index) => (
               <article
                 key={item.step}
-                className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/10 bg-white p-5"
+                className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/10 bg-white overflow-hidden"
                 style={{ animationDelay: `${450 + index * 110}ms` }}
               >
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={400}
+                  height={160}
+                  className="w-full border-b border-[#1f1b16]/10 object-cover"
+                />
+                <div className="p-5">
                 <p className="text-xs font-semibold tracking-[0.12em] text-[#7b6a58]">{item.step}</p>
                 <h4 className="mt-2 text-lg font-semibold">{item.title}</h4>
                 <p className="mt-2 text-sm leading-relaxed text-[#4f463d]">{item.description}</p>
+                </div>
               </article>
             ))}
           </div>
