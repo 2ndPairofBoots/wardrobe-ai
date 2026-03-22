@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { PublicHeader } from "@/components/site/PublicHeader";
 import { createClient } from "@/lib/supabase/server";
 
 type SignupPageProps = {
@@ -47,53 +48,57 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
         <div className="absolute bottom-[-6rem] right-[-3rem] h-64 w-64 rounded-full bg-[#8ab0ab]/20 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
-        <h1 className="text-2xl font-semibold">Sign up</h1>
-        <p className="mt-2 text-sm text-text-secondary">Create your wardrobe account.</p>
+      <div className="relative mx-auto w-full max-w-6xl">
+        <PublicHeader />
 
-        {error ? (
-          <p className="mt-4 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">
-            {error}
+        <div className="mx-auto mt-8 w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
+          <h1 className="text-2xl font-semibold">Sign up</h1>
+          <p className="mt-2 text-sm text-text-secondary">Create your wardrobe account.</p>
+
+          {error ? (
+            <p className="mt-4 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">
+              {error}
+            </p>
+          ) : null}
+
+          <form action={signup} className="mt-6 space-y-4">
+            <div>
+              <label htmlFor="email" className="mb-1 block text-sm text-text-secondary">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="mb-1 block text-sm text-text-secondary">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                minLength={8}
+                required
+                className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              />
+            </div>
+            <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
+              Sign up
+            </Button>
+          </form>
+
+          <p className="mt-4 text-sm text-text-secondary">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:text-primary-hover">
+              Log in
+            </Link>
           </p>
-        ) : null}
-
-        <form action={signup} className="mt-6 space-y-4">
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm text-text-secondary">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm text-text-secondary">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              minLength={8}
-              required
-              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
-            />
-          </div>
-          <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
-            Sign up
-          </Button>
-        </form>
-
-        <p className="mt-4 text-sm text-text-secondary">
-          Already have an account?{" "}
-          <Link href="/login" className="text-primary hover:text-primary-hover">
-            Log in
-          </Link>
-        </p>
+        </div>
       </div>
     </main>
   );
