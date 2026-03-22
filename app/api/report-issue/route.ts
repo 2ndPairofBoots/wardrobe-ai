@@ -14,6 +14,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidPageUrl(value: string): boolean {
+  if (!value) return true;
+
+  if (value.startsWith("/")) return true;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const rawBody = (await request.json()) as unknown;
@@ -36,6 +53,14 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
+    }
+
+    if (!isValidPageUrl(pageUrl)) {
+      return NextResponse.json({ error: "page_url must be a relative path or valid http(s) URL." }, { status: 400 });
+    }
+
     if (message.length < 15) {
       return NextResponse.json(
         { error: "Please include a bit more detail so we can reproduce the issue." },
@@ -43,17 +68,24 @@ export async function POST(request: Request) {
       );
     }
 
+    if (message.length > 5000 || reproSteps.length > 5000) {
+      return NextResponse.json(
+        { error: "message and repro_steps must be 5000 characters or fewer." },
+        { status: 400 }
+      );
+    }
+
     const issueId = randomUUID();
 
-    // For now we log reports server-side; this can later be routed to email, Slack, or a DB table.
+    // Log only metadata to avoid exposing raw message/email content in logs.
     console.info("[report-issue]", {
       issueId,
-      name,
-      email,
       category,
       pageUrl,
-      message,
-      reproSteps,
+      hasName: Boolean(name),
+      hasEmail: Boolean(email),
+      messageLength: message.length,
+      reproStepsLength: reproSteps.length,
       createdAt: new Date().toISOString(),
     });
 
