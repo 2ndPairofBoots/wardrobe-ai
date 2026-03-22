@@ -1,0 +1,101 @@
+# WardrobeAI — Cursor Rules
+
+## Project Overview
+WardrobeAI is a Next.js 14 app where users scan their wardrobe, organize clothing, build outfits,
+plan weekly looks, and receive AI-powered shopping suggestions based on body proportions, style
+preferences, weather, and location.
+
+## Tech Stack
+- Framework: Next.js 14 (App Router)
+- Database & Auth: Supabase
+- Storage: Supabase Storage
+- Styling: Tailwind CSS
+- AI: Google Gemini 2.0 Flash (`@google/generative-ai`)
+- Weather: OpenWeatherMap API
+- Hosting: Vercel
+
+---
+
+## Code Style & Patterns
+
+### General
+- Use TypeScript for every file. No `any` types — define proper interfaces in `types/index.ts`.
+- Named exports for components. Default exports only for page files.
+- All async operations must have try/catch with proper error handling.
+- Never use `console.log` in production paths — use the logger utility in `lib/utils/logger.ts`.
+- Keep components under ~150 lines. If a component exceeds this, break it into sub-components.
+
+### Next.js
+- App Router exclusively. No Pages Router patterns ever.
+- Server Components by default. Add `"use client"` only when needed (hooks, interactivity, browser APIs).
+- All API routes live in `app/api/`. Validate request body before any processing.
+- Use Next.js `<Image>` for all images. Never use raw `<img>` tags.
+- Server-side secrets stay in server components and API routes ONLY. Never expose to the client.
+
+### Supabase
+- All database queries go through server-side API routes or Server Components. Never query Supabase from client components.
+- Every table must have Row Level Security (RLS) enabled and policies defined.
+- Use Supabase Storage for all image uploads (wardrobe photos, user body photos).
+- Always verify the authenticated user owns a resource before any read/write/delete operation.
+- Use Supabase Auth for all authentication. No custom auth solutions.
+
+### Tailwind CSS
+- Tailwind utility classes only. No inline styles. No external CSS files unless absolutely necessary.
+- Use the design tokens defined in `tailwind.config.ts` for colors, spacing, and fonts.
+- Mobile-first responsive design. Every layout must be usable on mobile.
+- Extract repeated long className strings into components rather than duplicating them.
+
+### Gemini
+- All Gemini API calls are server-side only. Never call the Gemini API from a client component.
+- Images must be fetched server-side from Supabase Storage and converted to base64 before passing to Gemini. Never pass raw URLs to the Gemini API.
+- Always validate and sanitize AI responses before storing or displaying them.
+- Include fallback UI for when AI calls fail or return unexpected output.
+- Cache AI results in the database. If a wardrobe item already has `ai_analyzed = true`, skip the API call.
+- Rate limit all AI-powered routes using the limits defined in `instructions/ai-integration.md`.
+
+### Components
+- All reusable UI primitives live in `components/ui/`.
+- Feature components live in their feature folder (`components/wardrobe/`, `components/outfits/`, etc.).
+- Always use existing Button, Card, Modal, LoadingSpinner, and Badge components. Do not create duplicates.
+- Every interactive element must have a loading state and an error state.
+
+### Forms & Validation
+- Use React Hook Form for all forms.
+- Validate on both client and server. Never trust client input alone.
+
+---
+
+## Naming Conventions
+- Components: PascalCase (`WardrobeItemCard.tsx`)
+- Hooks: camelCase with `use` prefix (`useWardrobe.ts`)
+- Utilities: camelCase (`formatDate.ts`)
+- Types/Interfaces: PascalCase (`WardrobeItem`, `OutfitPlan`)
+- API route folders: kebab-case (`app/api/wardrobe-items/route.ts`)
+- Database tables: snake_case (`wardrobe_items`, `outfit_plans`)
+
+---
+
+## Security Rules
+- Never put API keys, secrets, or tokens in client-side code.
+- Confirm `.env.local` is in `.gitignore` before first commit.
+- Always check ownership before returning or modifying any user data.
+- Sanitize all user input before storing it.
+- Show generic error messages to users. Log detailed errors server-side only.
+- Rate limit all AI-powered API routes.
+- Body measurements and user photos are sensitive — verify strict RLS policies before any related feature is built.
+
+---
+
+## What NOT To Do
+- Do not use the Pages Router.
+- Do not use the `any` TypeScript type.
+- Do not call Supabase or Gemini from client components.
+- Do not create new UI primitives when one already exists in `components/ui/`.
+- Do not add new npm packages without first checking if the functionality already exists in the project.
+- Do not remove, delete, or modify any code outside the exact scope of the current task.
+- Do not add placeholder or mock data in production code paths.
+- Do not use raw `<img>` tags — always use Next.js `<Image>`.
+- Do not store sensitive data without confirming RLS policies are in place.
+- Do not show raw OpenAI responses or stack traces to the user.
+- Do not use localStorage for anything sensitive.
+- Do not leave TODO comments in completed features.
