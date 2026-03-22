@@ -1,0 +1,111 @@
+import Link from "next/link";
+
+const plans = [
+  {
+    name: "Starter",
+    price: "$0",
+    subtitle: "For getting your closet organized",
+    features: [
+      "Up to 150 wardrobe items",
+      "Basic outfit suggestions",
+      "Weekly planner",
+      "Weather-aware recommendations",
+    ],
+    cta: "Get started",
+    href: "/signup",
+    highlighted: false,
+  },
+  {
+    name: "Pro",
+    price: "$12/mo",
+    subtitle: "For serious wardrobe optimization",
+    features: [
+      "Unlimited wardrobe items",
+      "Advanced AI outfit engine",
+      "Cost-per-wear and utilization report",
+      "Shopping gap recommendations",
+      "Priority AI generations",
+    ],
+    cta: "Start Pro",
+    href: "/signup",
+    highlighted: true,
+  },
+  {
+    name: "Stylist+",
+    price: "$29/mo",
+    subtitle: "For coaching-level guidance",
+    features: [
+      "Everything in Pro",
+      "Personalized style strategy",
+      "Monthly closet report with action plan",
+      "Capsule wardrobe builder",
+      "Premium support",
+    ],
+    cta: "Contact sales",
+    href: "/signup",
+    highlighted: false,
+  },
+];
+
+export default function PricingPage() {
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-[#f6f2e9] text-[#1f1b16]">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-20 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#f9c784]/35 blur-3xl" />
+        <div className="absolute bottom-[-8rem] left-[-4rem] h-72 w-72 rounded-full bg-[#d8a48f]/25 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-12 sm:px-8 lg:px-10">
+        <header className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">Pricing</p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Choose the plan that fits your style goals</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-[#5d5043] sm:text-base">
+            Start free, then upgrade when you want deeper analytics, richer recommendations, and stronger wardrobe strategy.
+          </p>
+        </header>
+
+        <section className="mt-10 grid gap-4 lg:grid-cols-3">
+          {plans.map((plan) => (
+            <article
+              key={plan.name}
+              className={`rounded-2xl border p-6 ${
+                plan.highlighted
+                  ? "border-[#1f1b16]/25 bg-[#fffdf8] shadow-[0_25px_50px_-34px_rgba(31,27,22,0.55)]"
+                  : "border-[#1f1b16]/12 bg-white"
+              }`}
+            >
+              <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#7b6a58]">{plan.name}</p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight">{plan.price}</p>
+              <p className="mt-2 text-sm text-[#5d5043]">{plan.subtitle}</p>
+              <ul className="mt-5 space-y-2 text-sm text-[#2f2922]">
+                {plan.features.map((feature) => (
+                  <li key={feature}>- {feature}</li>
+                ))}
+              </ul>
+              <Link
+                href={plan.href}
+                className={`mt-6 inline-flex rounded-xl px-4 py-2 text-sm font-semibold transition duration-300 ${
+                  plan.highlighted
+                    ? "bg-[#1f1b16] text-[#fff6e8] hover:bg-[#2f2922]"
+                    : "border border-[#1f1b16]/20 bg-white text-[#1f1b16] hover:bg-[#f5ece0]"
+                }`}
+              >
+                {plan.cta}
+              </Link>
+            </article>
+          ))}
+        </section>
+
+        <section className="mt-10 rounded-3xl border border-[#1f1b16]/12 bg-[#fff9ef] p-6 sm:p-8">
+          <h2 className="text-xl font-semibold tracking-tight">Need enterprise or team pricing?</h2>
+          <p className="mt-2 max-w-2xl text-sm text-[#5d5043]">
+            We offer custom plans for stylists, wardrobe consultants, and fashion teams that want shared reporting and collaborative AI workflows.
+          </p>
+          <Link href="/report" className="mt-5 inline-flex rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]">
+            See sample report
+          </Link>
+        </section>
+      </div>
+    </main>
+  );
+}

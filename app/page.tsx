@@ -54,6 +54,9 @@ const footerGroups = [
     links: [
       { href: "#highlights", label: "Highlights" },
       { href: "#how-it-works", label: "How it works" },
+      { href: "/ai-features", label: "AI features" },
+      { href: "/report", label: "Report" },
+      { href: "/pricing", label: "Pricing" },
       { href: "/signup", label: "Get started" },
     ],
   },
@@ -159,6 +162,18 @@ export default function Home() {
             >
               How it works
             </Link>
+            <Link
+              href="/pricing"
+              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/report"
+              className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
+            >
+              Report
+            </Link>
             <Link href="/login" className="rounded-full px-4 py-2 text-[#3b342d] transition hover:bg-white">
               Log in
             </Link>
@@ -253,7 +268,7 @@ export default function Home() {
           <div className="mt-4 grid grid-cols-2 gap-3 text-center text-xs text-[#4f463d] sm:grid-cols-4 sm:text-sm">
             <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Outfit memory</div>
             <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Weather context</div>
-            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Body fit notes</div>
+            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Body proportions</div>
             <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Planner sync</div>
           </div>
         </section>
