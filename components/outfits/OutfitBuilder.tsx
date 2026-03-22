@@ -82,12 +82,12 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search wardrobe items"
-              className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary"
+              className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text-primary"
             />
             <select
               value={filterCategory}
               onChange={(event) => setFilterCategory(event.target.value as SlotCategory | "all")}
-              className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary"
+              className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-text-primary"
             >
               <option value="all">All categories</option>
               {slotOrder.map((category) => (
@@ -106,8 +106,8 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
                 onClick={() => setSelectedSlot(slot)}
                 className={`rounded-lg px-3 py-2 text-sm capitalize ${
                   selectedSlot === slot
-                    ? "bg-primary text-text-primary"
-                    : "bg-surface text-text-secondary hover:text-text-primary"
+                    ? "bg-primary text-[#fff6e8]"
+                    : "bg-white text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {slot}
@@ -121,7 +121,7 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
                 key={item.id}
                 type="button"
                 onClick={() => setSlotSelections((prev) => ({ ...prev, [selectedSlot]: item.id }))}
-                className="rounded-xl border border-border bg-surface p-2 text-left transition-colors hover:border-primary"
+                className="rounded-xl border border-border bg-white p-2 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary"
               >
                 <div className="relative h-24 overflow-hidden rounded-lg">
                   <Image src={item.image_url} alt={item.name} fill className="object-cover" unoptimized />
@@ -139,20 +139,20 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Outfit name"
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary"
+            className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary"
           />
           <div className="grid gap-2 sm:grid-cols-2">
             <input
               value={occasion}
               onChange={(event) => setOccasion(event.target.value)}
               placeholder="Occasion"
-              className="rounded-lg border border-border bg-background px-3 py-2 text-text-primary"
+              className="rounded-lg border border-border bg-white px-3 py-2 text-text-primary"
             />
             <input
               value={season}
               onChange={(event) => setSeason(event.target.value)}
               placeholder="Season"
-              className="rounded-lg border border-border bg-background px-3 py-2 text-text-primary"
+              className="rounded-lg border border-border bg-white px-3 py-2 text-text-primary"
             />
           </div>
 
@@ -164,7 +164,7 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
                   key={slot}
                   type="button"
                   onClick={() => setSelectedSlot(slot)}
-                  className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-white px-3 py-2 text-sm"
                 >
                   <span className="shrink-0 capitalize text-text-secondary">{slot}</span>
                   <span className="min-w-0 line-clamp-1 text-right text-text-primary">

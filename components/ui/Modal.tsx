@@ -34,12 +34,12 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     <div className="fixed inset-0 z-50 flex items-end justify-center p-3 sm:items-center sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-background/80"
+        className="absolute inset-0 bg-[#1f1b16]/45 backdrop-blur-[1px]"
         aria-label="Close modal"
         onClick={onClose}
       />
       <div
-        className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-surface p-4 text-text-primary sm:p-6"
+        className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-surface p-4 text-text-primary shadow-[0_34px_65px_-40px_rgba(31,27,22,0.65)] sm:p-6"
         role="dialog"
         aria-modal="true"
         aria-label={title}

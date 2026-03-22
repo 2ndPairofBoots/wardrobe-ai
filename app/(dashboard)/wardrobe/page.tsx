@@ -25,7 +25,6 @@ export default function WardrobePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   async function loadItems() {
     setLoading(true);
@@ -110,10 +109,9 @@ export default function WardrobePage() {
       const matchesSearch = searchQuery === "" || item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.subcategory.toLowerCase().includes(searchQuery.toLowerCase()) || (item.brand && item.brand.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesCategory = selectedCategory === null || item.category === selectedCategory;
       const matchesColor = selectedColor === null || item.colors.some((c) => c.toLowerCase() === selectedColor.toLowerCase());
-      const matchesFavorite = !showFavoritesOnly || item.is_favorite;
-      return matchesSearch && matchesCategory && matchesColor && matchesFavorite;
+      return matchesSearch && matchesCategory && matchesColor;
     });
-  }, [items, searchQuery, selectedCategory, selectedColor, showFavoritesOnly]);
+  }, [items, searchQuery, selectedCategory, selectedColor]);
 
   const allColors = useMemo(() => {
     const colorSet = new Set<string>();
@@ -130,9 +128,8 @@ export default function WardrobePage() {
   const wardrobeStats = useMemo(() => {
     return {
       total: items.length,
-      favorites: items.filter((i) => i.is_favorite).length,
-      mostWorn: items.reduce((max, item) => ((item.wear_count ?? 0) > (max.wear_count ?? 0) ? item : max), items[0]),
       categories: new Set(items.map((i) => i.category)).size,
+      colors: new Set(items.flatMap((i) => i.colors.map((color) => color.toLowerCase()))).size,
     };
   }, [items]);
 
@@ -141,7 +138,7 @@ export default function WardrobePage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-text-primary">Wardrobe</h1>
-          <p className="mt-1 text-sm text-text-secondary">{wardrobeStats.total} items • {wardrobeStats.categories} categories</p>
+          <p className="mt-1 text-sm text-text-secondary">{wardrobeStats.total} items • {wardrobeStats.categories} categories • {wardrobeStats.colors} colors</p>
         </div>
         <Button variant="primary" size="md" loading={false} onClick={() => setScanOpen(true)}>
           Scan item
@@ -152,7 +149,7 @@ export default function WardrobePage() {
         <p className="rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{error}</p>
       ) : null}
 
-      <div className="rounded-xl border border-border bg-surface p-4 space-y-4">
+      <div className="rounded-xl border border-border bg-surface p-4 space-y-4 shadow-[0_18px_38px_-34px_rgba(31,27,22,0.5)]">
         <div>
           <label className="mb-2 block text-sm font-medium text-text-primary">Search items</label>
           <input
@@ -160,7 +157,7 @@ export default function WardrobePage() {
             placeholder="Search by name, brand, or type..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
+            className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
           />
         </div>
 
@@ -170,7 +167,7 @@ export default function WardrobePage() {
             <select
               value={selectedCategory ?? ""}
               onChange={(e) => setSelectedCategory(e.target.value || null)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
             >
               <option value="">All categories</option>
               {categories.map((cat) => (
@@ -185,7 +182,7 @@ export default function WardrobePage() {
             <select
               value={selectedColor ?? ""}
               onChange={(e) => setSelectedColor(e.target.value || null)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text-primary outline-none ring-primary/50 focus:ring-2"
             >
               <option value="">All colors</option>
               {allColors.map((color) => (
@@ -196,25 +193,27 @@ export default function WardrobePage() {
             </select>
           </div>
           <div className="flex items-end">
-            <label className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 w-full cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showFavoritesOnly}
-                onChange={(e) => setShowFavoritesOnly(e.target.checked)}
-                className="rounded border border-text-secondary"
-              />
-              <span className="text-sm font-medium text-text-primary">Favorites only</span>
-            </label>
+            <Button
+              variant="secondary"
+              size="md"
+              loading={false}
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory(null);
+                setSelectedColor(null);
+              }}
+              className="w-full"
+            >
+              Clear filters
+            </Button>
           </div>
         </div>
       </div>
 
-      {filteredItems.length > 0 ? (
-        <p className="text-sm text-text-secondary text-center">Showing {filteredItems.length} of {items.length} items</p>
-      ) : null}
+      <p className="text-sm text-text-secondary text-center">Showing {filteredItems.length} of {items.length} items</p>
 
       <WardrobeGrid
-        items={filteredItems.length > 0 ? filteredItems : (loading ? [] : [])}
+        items={filteredItems}
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}

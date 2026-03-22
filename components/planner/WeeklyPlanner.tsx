@@ -108,7 +108,7 @@ export function WeeklyPlanner({
               key={dayKey}
               type="button"
               onClick={() => setSelectedDate(dayKey)}
-              className="rounded-xl border border-border bg-surface p-3 text-left transition-colors hover:border-primary"
+              className="rounded-xl border border-border bg-white p-3 text-left shadow-[0_14px_34px_-30px_rgba(31,27,22,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:border-primary"
             >
               <p className="text-xs text-text-secondary">{formatLabel(day)}</p>
               {assignedOutfit ? (
@@ -143,7 +143,7 @@ export function WeeklyPlanner({
                     onAssign(selectedDate, outfit.id);
                     setSelectedDate(null);
                   }}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-left text-sm text-text-primary transition-colors hover:border-primary"
+                  className="w-full rounded-lg border border-border bg-white px-3 py-2 text-left text-sm text-text-primary transition-colors hover:border-primary"
                 >
                   {outfit.name}
                 </button>

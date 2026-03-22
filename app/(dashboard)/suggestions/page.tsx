@@ -195,10 +195,16 @@ export default function SuggestionsPage() {
 
   return (
     <main className="space-y-6">
+      <section className="rounded-2xl border border-border bg-gradient-to-br from-[#fff9ef] to-[#fff4e2] p-5 sm:p-6">
+        <h1 className="text-2xl font-semibold text-text-primary">Suggestions</h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          Generate outfit ideas and optional shopping recommendations from your existing wardrobe.
+        </p>
+      </section>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-text-primary">Suggestions</h1>
-          <p className="mt-1 text-sm text-text-secondary">Generate AI outfit suggestions for today.</p>
+          <p className="text-sm text-text-secondary">Generate 3 outfit ideas tailored to your current closet.</p>
         </div>
         <Button
           variant="primary"

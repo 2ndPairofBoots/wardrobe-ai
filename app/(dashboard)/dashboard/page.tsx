@@ -39,7 +39,7 @@ export default function DashboardPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/suggestions"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-text-primary transition duration-300 hover:bg-primary-hover"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-primary-hover"
           >
             Get outfit suggestions
           </Link>

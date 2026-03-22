@@ -131,7 +131,7 @@ export function ScanUploader({ onScanComplete }: ScanUploaderProps) {
             if (droppedFile) await handleScan(droppedFile);
           }}
           onDragOver={(event) => event.preventDefault()}
-          className="rounded-xl border border-dashed border-border p-8 text-center"
+          className="rounded-xl border border-dashed border-border bg-white p-8 text-center shadow-[0_14px_32px_-28px_rgba(31,27,22,0.45)]"
         >
           <p className="text-text-primary">Drag and drop a clothing photo here.</p>
           <p className="mt-1 text-sm text-text-secondary">Or click below to upload.</p>
@@ -159,12 +159,12 @@ export function ScanUploader({ onScanComplete }: ScanUploaderProps) {
               <Image src={previewImageUrl} alt="Scanned item preview" fill className="object-cover" unoptimized />
             </div>
           ) : null}
-          <input value={reviewDraft.name} onChange={(e) => setReviewDraft((p) => ({ ...p, name: e.target.value }))} placeholder="Item name" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
-          <input value={reviewDraft.subcategory} onChange={(e) => setReviewDraft((p) => ({ ...p, subcategory: e.target.value }))} placeholder="Subcategory" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
-          <input value={reviewDraft.colors.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, colors: parseCsv(e.target.value) }))} placeholder="Colors (comma separated)" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
-          <input value={reviewDraft.material_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, material_tags: parseCsv(e.target.value) }))} placeholder="Material tags (comma separated)" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
-          <input value={reviewDraft.season_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, season_tags: parseCsv(e.target.value) }))} placeholder="Season tags (comma separated)" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
-          <input value={reviewDraft.occasion_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, occasion_tags: parseCsv(e.target.value) }))} placeholder="Occasion tags (comma separated)" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.name} onChange={(e) => setReviewDraft((p) => ({ ...p, name: e.target.value }))} placeholder="Item name" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.subcategory} onChange={(e) => setReviewDraft((p) => ({ ...p, subcategory: e.target.value }))} placeholder="Subcategory" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.colors.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, colors: parseCsv(e.target.value) }))} placeholder="Colors (comma separated)" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.material_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, material_tags: parseCsv(e.target.value) }))} placeholder="Material tags (comma separated)" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.season_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, season_tags: parseCsv(e.target.value) }))} placeholder="Season tags (comma separated)" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
+          <input value={reviewDraft.occasion_tags.join(", ")} onChange={(e) => setReviewDraft((p) => ({ ...p, occasion_tags: parseCsv(e.target.value) }))} placeholder="Occasion tags (comma separated)" className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary" />
           <div className="flex gap-3">
             <Button variant="primary" size="md" loading={false} onClick={handleSave}>Save item</Button>
             <Button variant="ghost" size="md" loading={false} onClick={() => setState("idle")}>Cancel</Button>

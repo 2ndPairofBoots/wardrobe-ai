@@ -128,10 +128,18 @@ export default function OutfitsPage() {
 
   return (
     <main className="space-y-6">
+      <section className="rounded-2xl border border-border bg-gradient-to-br from-[#fff9ef] to-[#fff4e2] p-5 sm:p-6">
+        <h1 className="text-2xl font-semibold text-text-primary">Outfits</h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          Build looks from your wardrobe and save them for quick planning.
+        </p>
+      </section>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-text-primary">Outfits</h1>
-          <p className="mt-1 text-sm text-text-secondary">Create and manage your saved looks.</p>
+          <p className="text-sm text-text-secondary">
+            {loading ? "Loading your outfits..." : `${outfits.length} saved outfit${outfits.length === 1 ? "" : "s"}`}
+          </p>
         </div>
         <Button
           variant="primary"
@@ -161,7 +169,7 @@ export default function OutfitsPage() {
         </div>
       ) : outfits.length === 0 ? (
         <Card padding="lg" hoverable={false}>
-          <p className="text-center text-text-secondary">No outfits yet. Create your first outfit to get started.</p>
+          <p className="text-center text-text-secondary">No outfits yet. Start by creating your first look from scanned items.</p>
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
