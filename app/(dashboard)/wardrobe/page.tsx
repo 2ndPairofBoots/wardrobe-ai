@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ScanUploader } from "@/components/wardrobe/ScanUploader";
 import { WardrobeGrid } from "@/components/wardrobe/WardrobeGrid";
 import { Button } from "@/components/ui/Button";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { WeeklyPlanner } from "@/components/planner/WeeklyPlanner";
 import { Card } from "@/components/ui/Card";
 import type { Outfit, WardrobeItem, WeeklyPlan } from "@/types";
@@ -43,7 +43,7 @@ export default function PlannerPage() {
 
   const weekStartKey = useMemo(() => toDateKey(weekStart), [weekStart]);
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -79,11 +79,11 @@ export default function PlannerPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [weekStartKey]);
 
   useEffect(() => {
     void loadData();
-  }, [weekStartKey]);
+  }, [loadData]);
 
   async function handleAssign(date: string, outfitId: string) {
     setError(null);
