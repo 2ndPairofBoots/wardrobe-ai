@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
@@ -14,12 +15,20 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   const error = searchParams?.error;
   const message = searchParams?.message;
 
+  function buildCallbackUrl() {
+    const headerList = headers();
+    const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+    const proto = headerList.get("x-forwarded-proto") ?? "http";
+    const origin = host ? `${proto}://${host}` : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+    return `${origin}/auth/callback?next=/dashboard`;
+  }
+
   async function loginWithGoogle() {
     "use server";
 
     const supabase = createClient();
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-    const callbackUrl = `${siteUrl}/auth/callback?next=/dashboard`;
+    const callbackUrl = buildCallbackUrl();
     const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

@@ -2,11 +2,7 @@
 
 import Link from "next/link";
 
-type PublicHeaderProps = {
-  showLandingAnchors?: boolean;
-};
-
-export function PublicHeader({ showLandingAnchors = false }: PublicHeaderProps) {
+export function PublicHeader() {
   return (
     <div className="sticky top-4 z-20 space-y-2">
       <header className="flex items-center justify-between rounded-full border border-[#1f1b16]/10 bg-white/80 px-4 py-2 backdrop-blur sm:px-6">
@@ -15,23 +11,6 @@ export function PublicHeader({ showLandingAnchors = false }: PublicHeaderProps) 
         </Link>
 
         <nav className="hidden items-center gap-1 text-sm md:flex">
-          {showLandingAnchors ? (
-            <>
-              <Link
-                href="/#highlights"
-                className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-              >
-                Highlights
-              </Link>
-              <Link
-                href="/#how-it-works"
-                className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
-              >
-                How it works
-              </Link>
-            </>
-          ) : null}
-
           <Link
             href="/pricing"
             className="rounded-full px-4 py-2 text-[#3b342d] transition duration-300 hover:bg-white hover:text-[#1f1b16]"
