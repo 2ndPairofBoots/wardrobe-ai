@@ -2,44 +2,44 @@ import Link from "next/link";
 
 const plans = [
   {
-    name: "Starter",
-    price: "$29 one-time",
-    subtitle: "Own the essentials forever",
+    name: "Free",
+    price: "$0",
+    subtitle: "Get started at no cost",
     features: [
-      "Up to 250 wardrobe items",
+      "Up to 100 wardrobe items",
       "Basic outfit suggestions",
       "Weekly planner",
       "Weather-aware recommendations",
     ],
-    cta: "Buy Starter",
+    cta: "Get Free",
     href: "/signup",
     highlighted: false,
   },
   {
-    name: "Pro",
-    price: "$89 one-time",
-    subtitle: "Best for full wardrobe automation",
+    name: "Starter",
+    price: "$10 one-time",
+    subtitle: "Best for everyday outfit planning",
     features: [
-      "Unlimited wardrobe items",
-      "Full AI outfit and shopping suggestions",
-      "Advanced report and usage insights",
-      "Priority AI generations",
+      "Up to 500 wardrobe items",
+      "Full AI outfit suggestions",
+      "Shopping suggestions",
+      "Advanced usage insights",
     ],
-    cta: "Buy Pro",
+    cta: "Buy Starter",
     href: "/signup",
     highlighted: true,
   },
   {
-    name: "Studio",
-    price: "$149 one-time",
-    subtitle: "One purchase for maximum capacity",
+    name: "Pro",
+    price: "$20 one-time",
+    subtitle: "One purchase for full access",
     features: [
-      "Everything in Pro",
-      "Highest generation limits",
-      "Early access to new AI modules",
-      "Perfect for long-term closet optimization",
+      "Everything in Starter",
+      "Unlimited wardrobe items",
+      "Higher generation limits",
+      "Priority support",
     ],
-    cta: "Buy Studio",
+    cta: "Buy Pro",
     href: "/signup",
     highlighted: false,
   },
@@ -58,7 +58,7 @@ export default function PricingPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">Pricing</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Simple pricing that stays out of your way</h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-[#5d5043] sm:text-base">
-            Every plan is a one-time payment with no recurring subscription.
+            Start free, then upgrade once with simple one-time options.
           </p>
         </header>
 
@@ -97,9 +97,9 @@ export default function PricingPage() {
         <section className="mt-10 rounded-3xl border border-[#1f1b16]/12 bg-[#fff9ef] p-6 sm:p-8">
           <h2 className="text-xl font-semibold tracking-tight">Quick pricing notes</h2>
           <ul className="mt-3 space-y-2 text-sm text-[#5d5043]">
-            <li>- All plans are one-time purchases.</li>
-            <li>- Starter is ideal if you want core wardrobe planning tools.</li>
-            <li>- Pro and Studio are best for heavy AI usage and long-term optimization.</li>
+            <li>- Free plan gives you core wardrobe planning tools.</li>
+            <li>- Starter is a one-time $10 upgrade for stronger AI suggestions.</li>
+            <li>- Pro is a one-time $20 upgrade for full capacity and priority support.</li>
           </ul>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/report" className="inline-flex rounded-xl bg-[#1f1b16] px-4 py-2 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#2f2922]">
