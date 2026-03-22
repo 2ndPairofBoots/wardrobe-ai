@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PublicHeader } from "@/components/site/PublicHeader";
 
 const plans = [
   {
@@ -55,8 +54,6 @@ export default function PricingPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-12 sm:px-8 lg:px-10">
-        <PublicHeader />
-
         <header className="mt-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f]">Pricing</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Simple pricing that stays out of your way</h1>

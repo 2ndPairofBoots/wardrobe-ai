@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { PublicHeader } from "@/components/site/PublicHeader";
 
 type LandingWeather = {
   locationLabel: string;
@@ -146,8 +145,6 @@ export default function Home() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-8 sm:px-8 lg:px-10">
-        <PublicHeader showLandingAnchors />
-
         <section className="grid items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:pb-24">
           <div className="motion-safe:animate-fade-up">
             <p className="inline-flex rounded-full border border-[#1f1b16]/15 bg-[#fff9ef] px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#564a3e]">

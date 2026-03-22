@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { PublicHeader } from "@/components/site/PublicHeader";
 import { createClient } from "@/lib/supabase/server";
 
 type SignupPageProps = {
@@ -48,10 +47,7 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
         <div className="absolute bottom-[-6rem] right-[-3rem] h-64 w-64 rounded-full bg-[#8ab0ab]/20 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl">
-        <PublicHeader />
-
-        <div className="mx-auto mt-8 w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
+      <div className="relative mx-auto w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
           <h1 className="text-2xl font-semibold">Sign up</h1>
           <p className="mt-2 text-sm text-text-secondary">Create your wardrobe account.</p>
 
@@ -98,7 +94,6 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
               Log in
             </Link>
           </p>
-        </div>
       </div>
     </main>
   );

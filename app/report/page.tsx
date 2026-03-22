@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-import { PublicHeader } from "@/components/site/PublicHeader";
 
 type ReportFormState = {
   name: string;
@@ -78,8 +77,6 @@ export default function ReportPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-10 sm:px-8 lg:px-10">
-        <PublicHeader />
-
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-3xl border border-[#1f1b16]/10 bg-white/80 p-6 shadow-[0_26px_60px_-45px_rgba(31,27,22,0.55)] backdrop-blur sm:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#6a5d4f]">Support</p>
