@@ -7,17 +7,17 @@ const highlights = [
   {
     title: "Photo scan that actually tags correctly",
     description: "Turn closet photos into structured items with category, season, color, and occasion tags.",
-    image: "https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg",
+    image: "https://images.pexels.com/photos/2769274/pexels-photo-2769274.jpeg",
   },
   {
     title: "Suggestions grounded in your real wardrobe",
     description: "Get outfit ideas from the pieces you own, filtered by weather, occasion, and style profile.",
-    image: "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg",
+    image: "https://images.pexels.com/photos/3621436/pexels-photo-3621436.jpeg",
   },
   {
     title: "Weekly planning with less decision fatigue",
     description: "Build your week once and avoid the daily what should I wear loop every morning.",
-    image: "https://images.pexels.com/photos/3726307/pexels-photo-3726307.jpeg",
+    image: "https://images.pexels.com/photos/6379122/pexels-photo-6379122.jpeg",
   },
 ];
 
@@ -26,19 +26,19 @@ const flow = [
     step: "01",
     title: "Build your closet map",
     description: "Upload clothing once. WardrobeAI extracts clean metadata so your closet is searchable.",
-    image: "https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg",
+    image: "https://images.pexels.com/photos/3912994/pexels-photo-3912994.jpeg",
   },
   {
     step: "02",
     title: "Generate outfit options",
     description: "Pick an occasion and let the AI compose complete looks from your actual items.",
-    image: "https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg",
+    image: "https://images.pexels.com/photos/2774902/pexels-photo-2774902.jpeg",
   },
   {
     step: "03",
     title: "Lock your week in minutes",
     description: "Drag suggestions into your planner so weekday mornings become autopilot.",
-    image: "https://images.pexels.com/photos/4552007/pexels-photo-4552007.jpeg",
+    image: "https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg",
   },
 ];
 
@@ -151,8 +151,8 @@ export default function Home() {
 
           <div className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/15 bg-[#fff9ef] p-5 shadow-[0_25px_60px_-35px_rgba(31,27,22,0.35)] [animation-delay:120ms]">
             <Image
-              src="https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg"
-              alt="Organized wardrobe closet"
+              src="https://images.pexels.com/photos/2769274/pexels-photo-2769274.jpeg"
+              alt="Individual clothing items and wardrobe pieces"
               width={500}
               height={220}
               className="w-full rounded-xl border border-[#1f1b16]/10 object-cover"
