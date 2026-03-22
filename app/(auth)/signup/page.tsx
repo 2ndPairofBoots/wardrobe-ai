@@ -12,6 +12,26 @@ type SignupPageProps = {
 export default function SignupPage({ searchParams }: SignupPageProps) {
   const error = searchParams?.error;
 
+  async function signupWithGoogle() {
+    "use server";
+
+    const supabase = createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const callbackUrl = `${siteUrl}/auth/callback?next=/dashboard`;
+    const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: callbackUrl,
+      },
+    });
+
+    if (oauthError || !data.url) {
+      redirect("/signup?error=Unable%20to%20start%20Google%20sign-up.");
+    }
+
+    redirect(data.url);
+  }
+
   async function signup(formData: FormData) {
     "use server";
 
@@ -85,6 +105,18 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
             </div>
             <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
               Sign up
+            </Button>
+          </form>
+
+          <div className="my-4 flex items-center gap-3 text-xs text-text-secondary">
+            <span className="h-px flex-1 bg-border" />
+            <span>or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <form action={signupWithGoogle}>
+            <Button type="submit" variant="secondary" size="md" loading={false} className="w-full">
+              Continue with Google
             </Button>
           </form>
 

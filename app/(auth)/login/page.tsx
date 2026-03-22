@@ -14,6 +14,26 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   const error = searchParams?.error;
   const message = searchParams?.message;
 
+  async function loginWithGoogle() {
+    "use server";
+
+    const supabase = createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const callbackUrl = `${siteUrl}/auth/callback?next=/dashboard`;
+    const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: callbackUrl,
+      },
+    });
+
+    if (oauthError || !data.url) {
+      redirect("/login?error=Unable%20to%20start%20Google%20sign-in.");
+    }
+
+    redirect(data.url);
+  }
+
   async function login(formData: FormData) {
     "use server";
 
@@ -87,6 +107,18 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             </div>
             <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
               Log in
+            </Button>
+          </form>
+
+          <div className="my-4 flex items-center gap-3 text-xs text-text-secondary">
+            <span className="h-px flex-1 bg-border" />
+            <span>or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <form action={loginWithGoogle}>
+            <Button type="submit" variant="secondary" size="md" loading={false} className="w-full">
+              Continue with Google
             </Button>
           </form>
 
