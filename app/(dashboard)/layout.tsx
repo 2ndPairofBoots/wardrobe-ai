@@ -8,6 +8,7 @@ type DashboardLayoutProps = {
 };
 
 const navigation = [
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/wardrobe", label: "Wardrobe" },
   { href: "/outfits", label: "Outfits" },
   { href: "/planner", label: "Planner" },

@@ -35,7 +35,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
       redirect("/login?error=Unable%20to%20sign%20in.%20Please%20try%20again.");
     }
 
-    redirect("/wardrobe");
+    redirect("/dashboard");
   }
 
   return (
