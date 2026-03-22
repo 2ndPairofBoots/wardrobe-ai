@@ -6,11 +6,17 @@ type OpenWeatherResponse = {
   main?: {
     temp?: number;
   };
+  name?: string;
+  sys?: {
+    country?: string;
+  };
 };
 
 export type CurrentWeather = {
   tempC: number;
   conditions: string;
+  city?: string;
+  countryCode?: string;
 };
 
 export async function getCurrentWeatherByCoordinates(lat: number, lng: number): Promise<CurrentWeather> {
@@ -46,5 +52,7 @@ export async function getCurrentWeatherByCoordinates(lat: number, lng: number): 
   return {
     tempC: temp,
     conditions,
+    city: data.name,
+    countryCode: data.sys?.country,
   };
 }

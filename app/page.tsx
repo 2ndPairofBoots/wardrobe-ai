@@ -2,6 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+type LandingWeather = {
+  locationLabel: string;
+  weatherLabel: string;
+};
 
 const highlights = [
   {
@@ -70,6 +76,63 @@ const footerGroups = [
 ];
 
 export default function Home() {
+  const [landingWeather, setLandingWeather] = useState<LandingWeather>({
+    locationLabel: "Using your location...",
+    weatherLabel: "Fetching weather...",
+  });
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLandingWeather({
+        locationLabel: "Location unavailable",
+        weatherLabel: "Weather unavailable",
+      });
+      return;
+    }
+
+    const onSuccess = async (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
+
+      try {
+        const response = await fetch(`/api/weather/current?lat=${latitude}&lng=${longitude}`);
+        const json = (await response.json()) as {
+          temp_c?: number;
+          conditions?: string;
+          city?: string | null;
+          country_code?: string | null;
+        };
+
+        if (!response.ok || typeof json.temp_c !== "number") {
+          throw new Error("Unable to load weather");
+        }
+
+        const location = [json.city, json.country_code].filter(Boolean).join(", ");
+        setLandingWeather({
+          locationLabel: location || "Nearby",
+          weatherLabel: `${Math.round(json.temp_c)} C, ${json.conditions ?? "Unknown"}`,
+        });
+      } catch {
+        setLandingWeather({
+          locationLabel: "Nearby",
+          weatherLabel: "Weather unavailable",
+        });
+      }
+    };
+
+    const onError = () => {
+      setLandingWeather({
+        locationLabel: "Location unavailable",
+        weatherLabel: "Enable location for live weather",
+      });
+    };
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 300000,
+    });
+  }, []);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f6f2e9] text-[#1f1b16]">
       <div className="pointer-events-none absolute inset-0">
@@ -160,8 +223,8 @@ export default function Home() {
             <div className="rounded-xl border border-[#1f1b16]/10 bg-white p-4 mt-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5d5043]">Today</p>
               <div className="mt-3 flex items-center justify-between">
-                <p className="text-sm text-[#4f463d]">Austin, TX</p>
-                <p className="text-sm font-semibold">22 C, Partly cloudy</p>
+                <p className="text-sm text-[#4f463d]">{landingWeather.locationLabel}</p>
+                <p className="text-sm font-semibold">{landingWeather.weatherLabel}</p>
               </div>
             </div>
             <div className="mt-4 space-y-3">
