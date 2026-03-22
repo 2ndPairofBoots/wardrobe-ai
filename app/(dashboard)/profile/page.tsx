@@ -1,6 +1,4 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,39 +6,35 @@ type ProfilePageProps = {
   searchParams?: {
     error?: string;
     success?: string;
-    analysis_success?: string;
   };
 };
 
 const styleOptions = ["casual", "streetwear", "minimal", "formal", "sport", "smart-casual"];
+const buildOptions = ["slim", "average", "athletic", "curvy", "plus-size"];
 
 type ProfileRow = {
   style_preferences: string[] | null;
   location_city: string | null;
   location_lat: number | null;
   location_lng: number | null;
-  body_photo_url: string | null;
+  height_cm: number | null;
   body_type: string | null;
   body_fit_notes: string[] | null;
   onboarding_complete: boolean;
 };
 
-function getProfilePhotoPath(value: string): string {
-  if (value.startsWith("profile-photos/")) {
-    return value.replace("profile-photos/", "");
+function parseMeasurement(notes: string[] | null, key: "waist_cm" | "leg_cm"): string {
+  if (!notes || notes.length === 0) {
+    return "";
   }
-  if (value.includes("/storage/v1/object/profile-photos/")) {
-    return value.split("/storage/v1/object/profile-photos/")[1] ?? value;
-  }
-  if (value.includes("/storage/v1/object/public/profile-photos/")) {
-    return value.split("/storage/v1/object/public/profile-photos/")[1] ?? value;
-  }
-  return value;
+
+  const prefix = `${key}:`;
+  const entry = notes.find((note) => note.startsWith(prefix));
+  return entry ? entry.replace(prefix, "") : "";
 }
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   let profile: ProfileRow | null = null;
-  let bodyPhotoSignedUrl: string | null = null;
 
   try {
     const supabase = createClient();
@@ -56,21 +50,13 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     const { data, error } = await supabase
       .from("profiles")
       .select(
-        "style_preferences, location_city, location_lat, location_lng, body_photo_url, body_type, body_fit_notes, onboarding_complete"
+        "style_preferences, location_city, location_lat, location_lng, height_cm, body_type, body_fit_notes, onboarding_complete"
       )
       .eq("id", user.id)
       .single();
 
     if (!error) {
       profile = data as ProfileRow;
-
-      if (profile.body_photo_url) {
-        const photoPath = getProfilePhotoPath(profile.body_photo_url);
-        const { data: signedData } = await supabase.storage
-          .from("profile-photos")
-          .createSignedUrl(photoPath, 3600);
-        bodyPhotoSignedUrl = signedData?.signedUrl ?? null;
-      }
     }
   } catch {
     redirect("/login");
@@ -86,19 +72,41 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     const locationCity = String(formData.get("location_city") ?? "").trim();
     const locationLatRaw = String(formData.get("location_lat") ?? "").trim();
     const locationLngRaw = String(formData.get("location_lng") ?? "").trim();
+    const heightCmRaw = String(formData.get("height_cm") ?? "").trim();
+    const bodyBuild = String(formData.get("body_build") ?? "").trim();
+    const waistCmRaw = String(formData.get("waist_cm") ?? "").trim();
+    const legCmRaw = String(formData.get("leg_cm") ?? "").trim();
 
     if (!locationCity || stylePreferences.length === 0) {
       redirect("/profile?error=Please%20select%20at%20least%20one%20style%20and%20enter%20a%20city.");
     }
 
+    if (!bodyBuild || !heightCmRaw || !waistCmRaw || !legCmRaw) {
+      redirect(
+        "/profile?error=Please%20provide%20your%20body%20build%2C%20height%2C%20waist%2C%20and%20leg%20measurements."
+      );
+    }
+
     const locationLat = locationLatRaw ? Number(locationLatRaw) : null;
     const locationLng = locationLngRaw ? Number(locationLngRaw) : null;
+    const heightCm = heightCmRaw ? Number(heightCmRaw) : null;
+    const waistCm = waistCmRaw ? Number(waistCmRaw) : null;
+    const legCm = legCmRaw ? Number(legCmRaw) : null;
 
     if (
       (locationLatRaw && Number.isNaN(locationLat)) ||
-      (locationLngRaw && Number.isNaN(locationLng))
+      (locationLngRaw && Number.isNaN(locationLng)) ||
+      Number.isNaN(heightCm) ||
+      Number.isNaN(waistCm) ||
+      Number.isNaN(legCm)
     ) {
-      redirect("/profile?error=Latitude%20and%20longitude%20must%20be%20valid%20numbers.");
+      redirect(
+        "/profile?error=Latitude%2C%20longitude%2C%20height%2C%20waist%2C%20and%20leg%20size%20must%20be%20valid%20numbers."
+      );
+    }
+
+    if ((heightCm ?? 0) <= 0 || (waistCm ?? 0) <= 0 || (legCm ?? 0) <= 0) {
+      redirect("/profile?error=Height%2C%20waist%2C%20and%20leg%20measurements%20must%20be%20greater%20than%200.");
     }
 
     try {
@@ -119,6 +127,10 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
           location_city: locationCity,
           location_lat: locationLat,
           location_lng: locationLng,
+          height_cm: heightCm,
+          body_type: bodyBuild,
+          body_fit_notes: [`waist_cm:${waistCm}`, `leg_cm:${legCm}`],
+          body_photo_url: null,
           onboarding_complete: true,
         })
         .eq("id", user.id);
@@ -133,94 +145,18 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     redirect("/profile?success=1");
   }
 
-  async function uploadBodyPhotoAndAnalyze(formData: FormData) {
-    "use server";
-
-    const photo = formData.get("body_photo");
-    if (!(photo instanceof File) || photo.size === 0) {
-      redirect("/profile?error=Please%20select%20a%20body%20photo%20to%20analyze.");
-    }
-
-    try {
-      const supabase = createClient();
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        redirect("/login");
-      }
-
-      const safeName = photo.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const storagePath = `${user.id}/${Date.now()}-${safeName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("profile-photos")
-        .upload(storagePath, photo, {
-          contentType: photo.type || "image/jpeg",
-          upsert: true,
-        });
-
-      if (uploadError) {
-        redirect("/profile?error=Unable%20to%20upload%20body%20photo.");
-      }
-
-      const { data: signedData, error: signedError } = await supabase.storage
-        .from("profile-photos")
-        .createSignedUrl(storagePath, 900);
-
-      if (signedError || !signedData?.signedUrl) {
-        redirect("/profile?error=Unable%20to%20prepare%20body%20photo%20analysis.");
-      }
-
-      const { error: profileUpdateError } = await supabase
-        .from("profiles")
-        .update({
-          body_photo_url: `profile-photos/${storagePath}`,
-        })
-        .eq("id", user.id);
-
-      if (profileUpdateError) {
-        redirect("/profile?error=Unable%20to%20save%20body%20photo.");
-      }
-
-      const origin = headers().get("origin") ?? process.env.NEXT_PUBLIC_APP_URL;
-      if (!origin) {
-        redirect("/profile?error=Unable%20to%20run%20body%20analysis.%20Missing%20app%20URL.");
-      }
-
-      const analysisResponse = await fetch(`${origin}/api/profile/analyze`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: headers().get("cookie") ?? "",
-        },
-        body: JSON.stringify({ bodyPhotoUrl: signedData.signedUrl }),
-      });
-
-      if (!analysisResponse.ok) {
-        const responseBody = (await analysisResponse.json()) as { error?: string };
-        const message = responseBody.error ?? "Unable to analyze body photo.";
-        redirect(`/profile?error=${encodeURIComponent(message)}`);
-      }
-    } catch {
-      redirect("/profile?error=Unable%20to%20analyze%20body%20photo.");
-    }
-
-    redirect("/profile?analysis_success=1");
-  }
-
   const selectedStyles = profile?.style_preferences ?? [];
+  const selectedBuild = profile?.body_type ?? "";
+  const waistCm = parseMeasurement(profile?.body_fit_notes ?? null, "waist_cm");
+  const legCm = parseMeasurement(profile?.body_fit_notes ?? null, "leg_cm");
   const error = searchParams?.error;
   const success = searchParams?.success === "1";
-  const analysisSuccess = searchParams?.analysis_success === "1";
 
   return (
     <main className="max-w-2xl space-y-6">
       <h1 className="text-2xl font-semibold text-text-primary">Profile</h1>
       <p className="mt-2 text-sm text-text-secondary">
-        Manage your preferences, location, and body-fit profile.
+        Manage your preferences, location, and body proportions for better outfit calculations.
       </p>
 
       {profile?.onboarding_complete ? (
@@ -230,12 +166,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       ) : null}
       {success ? (
         <p className="mt-4 rounded-lg border border-success/40 bg-success/10 p-3 text-sm text-success">
-          Onboarding details saved successfully.
-        </p>
-      ) : null}
-      {analysisSuccess ? (
-        <p className="mt-4 rounded-lg border border-success/40 bg-success/10 p-3 text-sm text-success">
-          Body photo uploaded and analyzed successfully.
+          Profile details saved successfully.
         </p>
       ) : null}
       {error ? (
@@ -245,56 +176,29 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       ) : null}
 
       <section className="rounded-xl border border-border bg-surface p-6">
-        <h2 className="text-lg font-semibold text-text-primary">Body fit analysis</h2>
+        <h2 className="text-lg font-semibold text-text-primary">Body proportions</h2>
         <p className="mt-1 text-sm text-text-secondary">
-          Upload a full-body photo to receive styling guidance tailored to your proportions.
+          Enter your proportions manually. This gives us stable fit inputs without photo analysis.
         </p>
-
-        {bodyPhotoSignedUrl ? (
-          <div className="relative mt-4 h-64 w-full overflow-hidden rounded-xl border border-border">
-            <Image
-              src={bodyPhotoSignedUrl}
-              alt="Body photo"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
-        ) : null}
-
-        <form action={uploadBodyPhotoAndAnalyze} className="mt-4 space-y-4">
-          <input
-            name="body_photo"
-            type="file"
-            accept="image/*"
-            required
-            className="block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-text-primary"
-          />
-          <Button variant="primary" size="md" loading={false}>
-            Upload and analyze
-          </Button>
-        </form>
 
         <div className="mt-5 space-y-2">
           <p className="text-sm font-medium text-text-primary">
-            Body type: {profile?.body_type ? profile.body_type : "Not analyzed yet"}
+            Build: {profile?.body_type ? profile.body_type : "Not provided"}
           </p>
-          {profile?.body_fit_notes && profile.body_fit_notes.length > 0 ? (
+          {profile?.height_cm ? (
+            <p className="text-sm text-text-secondary">Height: {profile.height_cm} cm</p>
+          ) : null}
+          {waistCm || legCm ? (
             <div className="rounded-lg border border-border bg-background p-4">
-              <p className="text-sm text-text-secondary">
-                Based on your proportions, here are practical styling tips:
-              </p>
+              <p className="text-sm text-text-secondary">Saved measurements:</p>
               <ul className="mt-2 space-y-1">
-                {profile.body_fit_notes.map((note, index) => (
-                  <li key={`${index}-${note}`} className="text-sm text-text-primary">
-                    - {note}
-                  </li>
-                ))}
+                {waistCm ? <li className="text-sm text-text-primary">- Waist: {waistCm} cm</li> : null}
+                {legCm ? <li className="text-sm text-text-primary">- Leg size: {legCm} cm</li> : null}
               </ul>
             </div>
           ) : (
             <p className="text-sm text-text-secondary">
-              Your personalized fit notes will appear here after analysis.
+              Add your measurements below to improve fit-based calculations.
             </p>
           )}
         </div>
@@ -332,7 +236,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             type="text"
             required
             defaultValue={profile?.location_city ?? ""}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+            className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
           />
         </div>
 
@@ -346,7 +250,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               name="location_lat"
               type="text"
               defaultValue={profile?.location_lat ?? ""}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
             />
           </div>
           <div>
@@ -358,13 +262,84 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               name="location_lng"
               type="text"
               defaultValue={profile?.location_lng ?? ""}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="body_build" className="mb-1 block text-sm text-text-secondary">
+              Body build
+            </label>
+            <select
+              id="body_build"
+              name="body_build"
+              required
+              defaultValue={selectedBuild}
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+            >
+              <option value="" disabled>
+                Select your build
+              </option>
+              {buildOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="height_cm" className="mb-1 block text-sm text-text-secondary">
+              Height (cm)
+            </label>
+            <input
+              id="height_cm"
+              name="height_cm"
+              type="number"
+              required
+              min={1}
+              defaultValue={profile?.height_cm ?? ""}
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="waist_cm" className="mb-1 block text-sm text-text-secondary">
+              Waist size (cm)
+            </label>
+            <input
+              id="waist_cm"
+              name="waist_cm"
+              type="number"
+              required
+              min={1}
+              defaultValue={waistCm}
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="leg_cm" className="mb-1 block text-sm text-text-secondary">
+              Leg size / inseam (cm)
+            </label>
+            <input
+              id="leg_cm"
+              name="leg_cm"
+              type="number"
+              required
+              min={1}
+              defaultValue={legCm}
+              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
             />
           </div>
         </div>
 
         <Button variant="primary" size="md" loading={false}>
-          Save onboarding
+          Save profile details
         </Button>
       </form>
     </main>
