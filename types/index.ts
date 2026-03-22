@@ -30,6 +30,9 @@ export interface WardrobeItem {
   brand: string | null
   ai_analyzed: boolean
   ai_metadata: Record<string, unknown> | null
+  is_favorite?: boolean
+  wear_count?: number
+  cost?: number | null
   created_at: string
 }
 
