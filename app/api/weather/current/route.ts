@@ -32,6 +32,7 @@ export async function GET(request: Request) {
       conditions: weather.conditions,
       city: weather.city ?? null,
       country_code: weather.countryCode ?? null,
+      region: weather.region ?? null,
     });
   } catch {
     return NextResponse.json({ error: "Unable to fetch weather." }, { status: 500 });

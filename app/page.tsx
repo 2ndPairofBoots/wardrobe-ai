@@ -103,13 +103,16 @@ export default function Home() {
           conditions?: string;
           city?: string | null;
           country_code?: string | null;
+          region?: string | null;
         };
 
         if (!response.ok || typeof json.temp_c !== "number") {
           throw new Error("Unable to load weather");
         }
 
-        const location = [json.city, json.country_code].filter(Boolean).join(", ");
+        const location = json.city
+          ? [json.city, json.region || json.country_code].filter(Boolean).join(", ")
+          : "";
         setLandingWeather({
           locationLabel: location || "Nearby",
           weatherLabel: `${Math.round(json.temp_c)} C, ${json.conditions ?? "Unknown"}`,
