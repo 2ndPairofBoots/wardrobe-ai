@@ -1,0 +1,22 @@
+---
+description: After code changes, commit to git and push to origin when appropriate
+alwaysApply: true
+---
+
+# Auto-commit and push
+
+When you finish a user-requested task that **modifies tracked project files** (code, config, assets):
+
+1. **Commit** those changes in one logical commit (or a few clearly named commits if the work is clearly separate).
+   - Use `git add` only for files you changed or intentionally include—never stage secrets (e.g. `.env`, `.env.local`, keys).
+   - Message: short imperative summary, e.g. `Fix scan API validation`, `Update home page copy`.
+   - If `user.name` / `user.email` are unset and commit fails, set **local** repo config using the GitHub `users.noreply.github.com` address for this repo’s owner (from `origin` URL) and a sensible display name, then retry—do not skip committing solely because identity was missing.
+
+2. **Push** to `origin` on the current branch after a successful commit **unless** the user asked not to push, or push fails (auth/network)—then report the outcome and leave the commit local.
+
+3. **Skip** auto-commit when:
+   - There are no changes to commit.
+   - The user explicitly said not to commit or to leave changes uncommitted.
+   - You only ran read-only exploration.
+
+4. Do **not** amend or force-push unless the user explicitly requests it.
