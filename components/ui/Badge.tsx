@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 type BadgeProps = {
   variant: "default" | "success" | "warning" | "danger";
@@ -6,19 +7,19 @@ type BadgeProps = {
 };
 
 const variantClasses: Record<BadgeProps["variant"], string> = {
-  default: "bg-white text-text-secondary border border-border",
-  success: "bg-success/10 text-success border border-success/35",
-  warning: "bg-warning/10 text-warning border border-warning/35",
-  danger: "bg-danger/10 text-danger border border-danger/35",
+  default: "border-transparent bg-secondary text-secondary-foreground",
+  success: "border-transparent bg-success/15 text-success",
+  warning: "border-transparent bg-warning/15 text-warning-foreground",
+  danger: "border-transparent bg-destructive/15 text-destructive",
 };
 
 export function Badge({ variant, children }: BadgeProps) {
   return (
     <span
-      className={[
-        "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-        variantClasses[variant],
-      ].join(" ")}
+      className={cn(
+        "inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium",
+        variantClasses[variant]
+      )}
     >
       {children}
     </span>

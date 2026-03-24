@@ -106,8 +106,8 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
                 onClick={() => setSelectedSlot(slot)}
                 className={`rounded-lg px-3 py-2 text-sm capitalize ${
                   selectedSlot === slot
-                    ? "bg-primary text-[#fff6e8]"
-                    : "bg-white text-text-secondary hover:text-text-primary"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {slot}
@@ -121,7 +121,7 @@ export function OutfitBuilder({ wardrobeItems, onSave, onCancel, initialOutfit }
                 key={item.id}
                 type="button"
                 onClick={() => setSlotSelections((prev) => ({ ...prev, [selectedSlot]: item.id }))}
-                className="rounded-xl border border-border bg-white p-2 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary"
+                className="rounded-lg border border-border bg-card p-2 text-left transition-colors hover:border-foreground/20"
               >
                 <div className="relative h-24 overflow-hidden rounded-lg">
                   <Image src={item.image_url} alt={item.name} fill className="object-cover" unoptimized />

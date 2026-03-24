@@ -108,7 +108,7 @@ export function WeeklyPlanner({
               key={dayKey}
               type="button"
               onClick={() => setSelectedDate(dayKey)}
-              className="rounded-xl border border-border bg-white p-3 text-left shadow-[0_14px_34px_-30px_rgba(31,27,22,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:border-primary"
+              className="rounded-lg border border-border bg-card p-3 text-left shadow-sm transition-colors hover:border-foreground/20"
             >
               <p className="text-xs text-text-secondary">{formatLabel(day)}</p>
               {assignedOutfit ? (

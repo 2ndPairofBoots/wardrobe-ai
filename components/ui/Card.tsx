@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 type CardProps = {
   padding: "sm" | "md" | "lg";
@@ -12,14 +13,15 @@ const paddingClasses: Record<CardProps["padding"], string> = {
   lg: "p-6",
 };
 
-export function Card({ padding, hoverable, children, ...rest }: CardProps) {
+export function Card({ padding, hoverable, children, className, ...rest }: CardProps) {
   return (
     <div
-      className={[
-        "rounded-xl border border-border bg-surface text-text-primary shadow-[0_16px_40px_-32px_rgba(31,27,22,0.4)] transition-all duration-300",
-        hoverable ? "cursor-pointer hover:-translate-y-0.5 hover:border-primary-hover hover:shadow-[0_24px_50px_-34px_rgba(31,27,22,0.55)]" : "",
+      className={cn(
+        "rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+        hoverable && "cursor-pointer transition-colors hover:border-foreground/20 hover:bg-accent/30",
         paddingClasses[padding],
-      ].join(" ")}
+        className
+      )}
       {...rest}
     >
       {children}

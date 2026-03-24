@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 type ModalProps = {
   open: boolean;
@@ -34,21 +35,23 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     <div className="fixed inset-0 z-50 flex items-end justify-center p-3 sm:items-center sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-[#1f1b16]/45 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-black/50"
         aria-label="Close modal"
         onClick={onClose}
       />
       <div
-        className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-surface p-4 text-text-primary shadow-[0_34px_65px_-40px_rgba(31,27,22,0.65)] sm:p-6"
+        className={cn(
+          "relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-border bg-card p-4 text-card-foreground shadow-lg sm:p-6"
+        )}
         role="dialog"
         aria-modal="true"
         aria-label={title}
       >
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold">{title}</h2>
+        <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-3">
+          <h2 className="text-lg font-semibold leading-none">{title}</h2>
           <button
             type="button"
-            className="rounded-lg px-2 py-1 text-text-secondary transition-colors hover:bg-background hover:text-text-primary"
+            className="rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             onClick={onClose}
             aria-label="Close"
           >

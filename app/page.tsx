@@ -11,18 +11,20 @@ type LandingWeather = {
 
 const highlights = [
   {
-    title: "Photo scan that actually tags correctly",
-    description: "Turn closet photos into structured items with category, season, color, and occasion tags.",
+    title: "Photo scan that tags consistently",
+    description:
+      "Turn closet photos into structured items with category, season, color, and occasion metadata.",
     image: "https://images.pexels.com/photos/2112651/pexels-photo-2112651.jpeg",
   },
   {
-    title: "Suggestions grounded in your real wardrobe",
-    description: "Get outfit ideas from the pieces you own, filtered by weather, occasion, and style profile.",
+    title: "Suggestions from your real wardrobe",
+    description:
+      "Outfit ideas use pieces you own, with weather, occasion, and profile context.",
     image: "https://images.pexels.com/photos/4857762/pexels-photo-4857762.jpeg",
   },
   {
-    title: "Weekly planning with less decision fatigue",
-    description: "Build your week once and avoid the daily what should I wear loop every morning.",
+    title: "Weekly planning",
+    description: "Plan outfits ahead to cut down on daily decision time.",
     image: "https://images.pexels.com/photos/8400600/pexels-photo-8400600.jpeg",
   },
 ];
@@ -30,20 +32,20 @@ const highlights = [
 const flow = [
   {
     step: "01",
-    title: "Build your closet map",
-    description: "Upload clothing once. WardrobeAI extracts clean metadata so your closet is searchable.",
+    title: "Catalog items",
+    description: "Upload or scan clothing once. Metadata stays searchable in your closet.",
     image: "https://images.pexels.com/photos/1148957/pexels-photo-1148957.jpeg",
   },
   {
     step: "02",
-    title: "Generate outfit options",
-    description: "Pick an occasion and let the AI compose complete looks from your actual items.",
+    title: "Generate outfits",
+    description: "Choose an occasion and review AI-suggested combinations from your items.",
     image: "https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg",
   },
   {
     step: "03",
-    title: "Lock your week in minutes",
-    description: "Drag suggestions into your planner so weekday mornings become autopilot.",
+    title: "Schedule the week",
+    description: "Assign looks to days in the planner for a clearer morning routine.",
     image: "https://images.pexels.com/photos/9393922/pexels-photo-9393922.jpeg",
   },
 ];
@@ -78,10 +80,15 @@ const footerGroups = [
   },
 ];
 
+const primaryBtn =
+  "inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover";
+const secondaryBtn =
+  "inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground";
+
 export default function Home() {
   const [landingWeather, setLandingWeather] = useState<LandingWeather>({
-    locationLabel: "Using your location...",
-    weatherLabel: "Fetching weather...",
+    locationLabel: "Detecting location…",
+    weatherLabel: "Loading weather…",
   });
 
   useEffect(() => {
@@ -115,7 +122,7 @@ export default function Home() {
           : "";
         setLandingWeather({
           locationLabel: location || "Nearby",
-          weatherLabel: `${Math.round(json.temp_c)} C, ${json.conditions ?? "Unknown"}`,
+          weatherLabel: `${Math.round(json.temp_c)}°C · ${json.conditions ?? "—"}`,
         });
       } catch {
         setLandingWeather({
@@ -128,7 +135,7 @@ export default function Home() {
     const onError = () => {
       setLandingWeather({
         locationLabel: "Location unavailable",
-        weatherLabel: "Enable location for live weather",
+        weatherLabel: "Allow location for live weather",
       });
     };
 
@@ -140,183 +147,165 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f6f2e9] text-[#1f1b16]">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-20 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#f9c784]/40 blur-3xl" />
-        <div className="absolute right-[-8rem] top-44 h-72 w-72 rounded-full bg-[#8ab0ab]/30 blur-3xl" />
-        <div className="absolute bottom-[-8rem] left-[-6rem] h-72 w-72 rounded-full bg-[#d8a48f]/30 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-8 sm:px-8 lg:px-10">
-        <section className="grid items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:pb-24">
-          <div className="motion-safe:animate-fade-up">
-            <p className="inline-flex rounded-full border border-[#1f1b16]/15 bg-[#fff9ef] px-4 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#564a3e]">
-              AI wardrobe operating system
-            </p>
-            <h1 className="mt-5 max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Dress with intent, not guesswork.
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+        <section className="grid items-start gap-12 pb-16 pt-6 lg:grid-cols-[1.05fr_0.95fr] lg:pb-20">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Wardrobe intelligence</p>
+            <h1 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+              Plan outfits with less guesswork.
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-[#4f463d] sm:text-lg">
-              WardrobeAI turns your closet into a decision engine. Scan pieces once, get smarter outfit
-              suggestions daily, and plan your week with confidence.
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Catalog what you own, get structured suggestions, and align looks with weather and schedule.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/signup"
-                className="rounded-xl bg-[#1f1b16] px-6 py-3 text-sm font-semibold text-[#fff6e8] shadow-[0_10px_30px_-16px_rgba(31,27,22,0.6)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2f2922]"
-              >
-                Create your account
+              <Link href="/signup" className={primaryBtn}>
+                Create account
               </Link>
-              <Link
-                href="#how-it-works"
-                className="rounded-xl border border-[#1f1b16]/20 bg-white/70 px-6 py-3 text-sm font-semibold text-[#2d2721] transition duration-300 hover:-translate-y-0.5 hover:bg-white"
-              >
-                See how it works
+              <Link href="#how-it-works" className={secondaryBtn}>
+                How it works
               </Link>
             </div>
-            <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 text-center text-xs sm:text-sm">
-              {["3 min setup", "Weather aware", "Daily suggestions"].map((stat) => (
-                <div key={stat} className="rounded-xl border border-[#1f1b16]/10 bg-white/70 p-3 font-medium text-[#4f463d]">
-                  {stat}
-                </div>
-              ))}
-            </div>
+            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-3 border-t border-border pt-8 text-sm">
+              <div>
+                <dt className="text-muted-foreground">Setup</dt>
+                <dd className="mt-1 font-medium">Minutes</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Weather</dt>
+                <dd className="mt-1 font-medium">Aware</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Suggestions</dt>
+                <dd className="mt-1 font-medium">Daily</dd>
+              </div>
+            </dl>
           </div>
 
-          <div className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/15 bg-[#fff9ef] p-5 shadow-[0_25px_60px_-35px_rgba(31,27,22,0.35)] [animation-delay:120ms]">
+          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
             <Image
               src="https://images.pexels.com/photos/250290/pexels-photo-250290.jpeg"
-              alt="Colorful clothes hanging on a rack in a closet"
-              width={500}
-              height={220}
-              className="w-full rounded-xl border border-[#1f1b16]/10 object-cover"
+              alt="Clothing on hangers"
+              width={560}
+              height={240}
+              className="aspect-[21/9] w-full rounded-md border border-border object-cover"
             />
-            <div className="rounded-xl border border-[#1f1b16]/10 bg-white p-4 mt-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5d5043]">Today</p>
-              <div className="mt-3 flex items-center justify-between">
-                <p className="text-sm text-[#4f463d]">{landingWeather.locationLabel}</p>
-                <p className="text-sm font-semibold">{landingWeather.weatherLabel}</p>
+            <div className="mt-4 rounded-md border border-border bg-muted/40 px-4 py-3">
+              <p className="text-xs font-medium text-muted-foreground">Current conditions</p>
+              <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2">
+                <p className="text-sm text-foreground">{landingWeather.locationLabel}</p>
+                <p className="text-sm font-medium tabular-nums">{landingWeather.weatherLabel}</p>
               </div>
             </div>
-            <div className="mt-4 space-y-3">
+            <ul className="mt-4 space-y-2">
               {[
-                "Relaxed office: ivory oxford + charcoal trousers + tan loafers",
-                "Evening plans: black knit + straight denim + suede jacket",
-                "Rain-safe option: utility overshirt + tee + water-resistant sneakers",
-              ].map((item, index) => (
-                <article
+                "Office: oxford shirt, tailored trousers, leather shoes",
+                "Evening: knit top, dark denim, light jacket",
+                "Rain: overshirt, tee, water-resistant footwear",
+              ].map((item) => (
+                <li
                   key={item}
-                  className="motion-safe:animate-fade-up rounded-xl border border-[#1f1b16]/10 bg-white p-4"
-                  style={{ animationDelay: `${220 + index * 100}ms` }}
+                  className="rounded-md border border-border bg-background px-4 py-3 text-sm leading-snug text-foreground"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5d5043]">Option {index + 1}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-[#2f2922]">{item}</p>
-                </article>
+                  {item}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-[#1f1b16]/10 bg-white/65 p-5 backdrop-blur">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.14em] text-[#6a5d4f] sm:text-sm">
-            Built for everyday wardrobes, not runway closets
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-center text-xs text-[#4f463d] sm:grid-cols-4 sm:text-sm">
-            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Outfit memory</div>
-            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Weather context</div>
-            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Body proportions</div>
-            <div className="rounded-lg border border-[#1f1b16]/10 bg-[#fffdf8] px-3 py-2 font-medium">Planner sync</div>
+        <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          <p className="text-center text-sm font-medium text-muted-foreground">Built for everyday wardrobes</p>
+          <div className="mt-4 grid grid-cols-2 gap-2 text-center text-sm sm:grid-cols-4">
+            {["Outfit history", "Weather context", "Profile", "Planner"].map((label) => (
+              <div key={label} className="rounded-md border border-border bg-background px-3 py-2.5 font-medium">
+                {label}
+              </div>
+            ))}
           </div>
         </section>
 
-        <section id="highlights" className="mt-6 grid gap-4 md:grid-cols-3">
-          {highlights.map((highlight, index) => (
+        <section id="highlights" className="mt-10 grid gap-4 md:grid-cols-3">
+          {highlights.map((highlight) => (
             <article
               key={highlight.title}
-              className="motion-safe:animate-fade-up group rounded-2xl border border-[#1f1b16]/15 bg-white/80 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#1f1b16]/25 hover:shadow-[0_18px_40px_-28px_rgba(31,27,22,0.55)] overflow-hidden"
-              style={{ animationDelay: `${300 + index * 120}ms` }}
+              className="overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-colors hover:border-foreground/15"
             >
               <Image
                 src={highlight.image}
-                alt={highlight.title}
+                alt=""
                 width={400}
                 height={180}
-                className="w-full border-b border-[#1f1b16]/10 object-cover"
+                className="aspect-[20/9] w-full border-b border-border object-cover"
               />
-              <div className="p-6">
-              <h2 className="text-lg font-semibold tracking-tight transition duration-300 group-hover:text-[#2f2922]">{highlight.title}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-[#4f463d]">{highlight.description}</p>
+              <div className="p-5">
+                <h2 className="text-base font-semibold leading-snug">{highlight.title}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{highlight.description}</p>
               </div>
             </article>
           ))}
         </section>
 
-        <section id="how-it-works" className="mt-16 rounded-3xl border border-[#1f1b16]/10 bg-[#fffdf8] p-6 sm:p-8">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#5d5043]">How it works</p>
-            <h3 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">A simple loop you can actually stick with</h3>
-          </div>
+        <section id="how-it-works" className="mt-16 rounded-lg border border-border bg-card p-6 shadow-sm sm:p-8">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Workflow</p>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Three steps</h3>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {flow.map((item, index) => (
-              <article
-                key={item.step}
-                className="motion-safe:animate-fade-up rounded-2xl border border-[#1f1b16]/10 bg-white overflow-hidden"
-                style={{ animationDelay: `${450 + index * 110}ms` }}
-              >
+            {flow.map((item) => (
+              <article key={item.step} className="overflow-hidden rounded-lg border border-border bg-background">
                 <Image
                   src={item.image}
-                  alt={item.title}
+                  alt=""
                   width={400}
                   height={160}
-                  className="w-full border-b border-[#1f1b16]/10 object-cover"
+                  className="aspect-[5/2] w-full border-b border-border object-cover"
                 />
-                <div className="p-5">
-                <p className="text-xs font-semibold tracking-[0.12em] text-[#7b6a58]">{item.step}</p>
-                <h4 className="mt-2 text-lg font-semibold">{item.title}</h4>
-                <p className="mt-2 text-sm leading-relaxed text-[#4f463d]">{item.description}</p>
+                <div className="p-4">
+                  <p className="text-xs font-medium text-muted-foreground">{item.step}</p>
+                  <h4 className="mt-1 text-base font-semibold">{item.title}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="mt-12 rounded-3xl border border-[#1f1b16]/15 bg-[#1f1b16] p-8 text-center text-[#fff6e8] sm:p-10">
-          <h3 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ready to make getting dressed effortless?</h3>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-[#f4e7d3]/85 sm:text-base">
-            Start with what you already own and get a clearer, smarter way to plan outfits every week.
+        <section className="mt-12 rounded-lg border border-border bg-primary px-6 py-10 text-center text-primary-foreground sm:px-10">
+          <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">Start with your closet</h3>
+          <p className="mx-auto mt-2 max-w-lg text-sm text-primary-foreground/85 sm:text-base">
+            Use what you already own; improve planning without replacing your wardrobe first.
           </p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               href="/signup"
-              className="rounded-xl bg-[#fff6e8] px-6 py-3 text-sm font-semibold text-[#1f1b16] transition duration-300 hover:-translate-y-0.5 hover:bg-[#fff1dc]"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-primary-foreground/25 bg-primary-foreground px-6 text-sm font-medium text-primary shadow-sm transition-colors hover:bg-primary-foreground/95"
             >
-              Get started free
+              Get started
             </Link>
             <Link
               href="/login"
-              className="rounded-xl border border-[#fff6e8]/35 px-6 py-3 text-sm font-semibold text-[#fff6e8] transition duration-300 hover:bg-[#fff6e8]/10"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-primary-foreground/40 px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-foreground/10"
             >
-              I already have an account
+              Log in
             </Link>
           </div>
         </section>
 
-        <footer className="mt-14 border-t border-[#1f1b16]/12 pt-8">
-          <div className="grid gap-8 md:grid-cols-[1.1fr_1fr]">
+        <footer className="mt-14 border-t border-border pt-10">
+          <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
             <div>
-              <p className="text-lg font-semibold tracking-tight">WardrobeAI</p>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-[#5d5043]">
-                A practical AI wardrobe assistant built to reduce decision fatigue and help you wear what you own better.
+              <p className="text-base font-semibold">WardrobeAI</p>
+              <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                Assistant for cataloging clothes, suggesting outfits, and weekly planning.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
               {footerGroups.map((group) => (
                 <div key={group.title}>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7b6a58]">{group.title}</p>
-                  <ul className="mt-3 space-y-2 text-sm text-[#4f463d]">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.title}</p>
+                  <ul className="mt-3 space-y-2 text-sm">
                     {group.links.map((link) => (
                       <li key={link.label}>
-                        <Link href={link.href} className="transition duration-300 hover:text-[#1f1b16]">
+                        <Link href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
                           {link.label}
                         </Link>
                       </li>
@@ -326,8 +315,8 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <p className="mt-8 border-t border-[#1f1b16]/10 py-4 text-xs text-[#7b6a58]">
-            © {new Date().getFullYear()} WardrobeAI. Designed for real closets.
+          <p className="mt-10 border-t border-border py-6 text-xs text-muted-foreground">
+            © {new Date().getFullYear()} WardrobeAI
           </p>
         </footer>
       </div>

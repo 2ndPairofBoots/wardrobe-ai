@@ -68,15 +68,10 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background px-4 py-10 text-text-primary">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-14 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#f9c784]/30 blur-3xl" />
-        <div className="absolute bottom-[-6rem] right-[-3rem] h-64 w-64 rounded-full bg-[#8ab0ab]/20 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto w-full max-w-md rounded-2xl border border-border bg-surface/90 p-6 shadow-[0_30px_60px_-36px_rgba(31,27,22,0.55)] backdrop-blur sm:p-7">
-          <h1 className="text-2xl font-semibold">Log in</h1>
-          <p className="mt-2 text-sm text-text-secondary">Access your wardrobe account.</p>
+    <main className="min-h-screen bg-background px-4 py-12 text-foreground">
+      <div className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-sm sm:p-8">
+          <h1 className="text-2xl font-semibold tracking-tight">Log in</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Access your WardrobeAI account.</p>
 
           {error ? (
             <p className="mt-4 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">
@@ -91,7 +86,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 
           <form action={login} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm text-text-secondary">
+              <label htmlFor="email" className="mb-1 block text-sm font-medium text-muted-foreground">
                 Email
               </label>
               <input
@@ -99,11 +94,11 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
                 name="email"
                 type="email"
                 required
-                className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm text-text-secondary">
+              <label htmlFor="password" className="mb-1 block text-sm font-medium text-muted-foreground">
                 Password
               </label>
               <input
@@ -111,7 +106,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
                 name="password"
                 type="password"
                 required
-                className="w-full rounded-lg border border-border bg-white px-3 py-2 text-text-primary outline-none ring-primary/50 focus:ring-2"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <Button type="submit" variant="primary" size="md" loading={false} className="w-full">
@@ -119,7 +114,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             </Button>
           </form>
 
-          <div className="my-4 flex items-center gap-3 text-xs text-text-secondary">
+          <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
             <span>or</span>
             <span className="h-px flex-1 bg-border" />
@@ -131,9 +126,9 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             </Button>
           </form>
 
-          <p className="mt-4 text-sm text-text-secondary">
+          <p className="mt-4 text-sm text-muted-foreground">
             No account yet?{" "}
-            <Link href="/signup" className="text-primary hover:text-primary-hover">
+            <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
               Sign up
             </Link>
           </p>
