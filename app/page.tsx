@@ -93,12 +93,14 @@ export default function Home() {
 
   useEffect(() => {
     const cacheKey = "landingWeather:v1";
+    let hadCache = false;
     const cachedRaw = typeof window !== "undefined" ? window.localStorage.getItem(cacheKey) : null;
     if (cachedRaw) {
       try {
         const cached = JSON.parse(cachedRaw) as { ts: number; locationLabel: string; weatherLabel: string };
         const ageMs = Date.now() - cached.ts;
         if (Number.isFinite(ageMs) && ageMs >= 0 && ageMs < 20 * 60 * 1000) {
+          hadCache = true;
           setLandingWeather({ locationLabel: cached.locationLabel, weatherLabel: cached.weatherLabel });
         }
       } catch {
@@ -106,65 +108,73 @@ export default function Home() {
       }
     }
 
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setLandingWeather({
-        locationLabel: "Location unavailable",
-        weatherLabel: "Weather unavailable",
-      });
-      return;
+    let didSetFromFetch = false;
+
+    async function loadWeather(url: string) {
+      const response = await fetch(url);
+      const json = (await response.json()) as {
+        temp?: number;
+        unit?: "C" | "F";
+        conditions?: string;
+        city?: string | null;
+        country_code?: string | null;
+        region?: string | null;
+      };
+
+      if (!response.ok || typeof json.temp !== "number" || (json.unit !== "C" && json.unit !== "F")) {
+        throw new Error("Unable to load weather");
+      }
+
+      const location = json.city
+        ? [json.city, json.region || json.country_code].filter(Boolean).join(", ")
+        : "";
+
+      const next = {
+        locationLabel: location || "Nearby",
+        weatherLabel: `${Math.round(json.temp)}°${json.unit} · ${json.conditions ?? "—"}`,
+      };
+
+      didSetFromFetch = true;
+      setLandingWeather(next);
+      window.localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), ...next }));
     }
 
-    const onSuccess = async (position: GeolocationPosition) => {
-      const { latitude, longitude } = position.coords;
-
-      try {
-        const response = await fetch(`/api/weather/current?lat=${latitude}&lng=${longitude}`);
-        const json = (await response.json()) as {
-          temp?: number;
-          unit?: "C" | "F";
-          temp_c?: number;
-          temp_f?: number;
-          conditions?: string;
-          city?: string | null;
-          country_code?: string | null;
-          region?: string | null;
-        };
-
-        if (!response.ok || typeof json.temp !== "number" || (json.unit !== "C" && json.unit !== "F")) {
-          throw new Error("Unable to load weather");
-        }
-
-        const location = json.city
-          ? [json.city, json.region || json.country_code].filter(Boolean).join(", ")
-          : "";
-
-        const next = {
-          locationLabel: location || "Nearby",
-          weatherLabel: `${Math.round(json.temp)}°${json.unit} · ${json.conditions ?? "—"}`,
-        };
-
-        setLandingWeather(next);
-        window.localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), ...next }));
-      } catch {
+    // 1) Fast initial render using IP-based location (no GPS permission).
+    // 2) If the user allows it, refine using GPS for better locality.
+    void loadWeather("/api/weather/current").catch(() => {
+      if (!didSetFromFetch && !hadCache) {
         setLandingWeather({
           locationLabel: "Nearby",
           weatherLabel: "Weather unavailable",
         });
       }
-    };
-
-    const onError = () => {
-      setLandingWeather({
-        locationLabel: "Location unavailable",
-        weatherLabel: "Allow location for live weather",
-      });
-    };
-
-    navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-      enableHighAccuracy: false,
-      timeout: 5000,
-      maximumAge: 10 * 60 * 1000,
     });
+
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      const onSuccess = async (position: GeolocationPosition) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          await loadWeather(`/api/weather/current?lat=${latitude}&lng=${longitude}`);
+        } catch {
+          // Ignore; keep IP-based values.
+        }
+      };
+
+      const onError = () => {
+        if (!didSetFromFetch) {
+          setLandingWeather({
+            locationLabel: "Location unavailable",
+            weatherLabel: "Allow location for live weather",
+          });
+        }
+      };
+
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 10 * 60 * 1000,
+      });
+    }
   }, []);
 
   return (

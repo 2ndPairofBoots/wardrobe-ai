@@ -74,7 +74,11 @@ async function reverseGeocodeLocality(
   }
 }
 
-export async function getCurrentWeatherByCoordinates(lat: number, lng: number): Promise<CurrentWeather> {
+export async function getCurrentWeatherByCoordinates(
+  lat: number,
+  lng: number,
+  options?: { countryCodeOverride?: string | null }
+): Promise<CurrentWeather> {
   const apiKey = process.env.OPENWEATHER_API_KEY;
   if (!apiKey) {
     throw new Error("Missing OpenWeatherMap API key.");
@@ -111,7 +115,7 @@ export async function getCurrentWeatherByCoordinates(lat: number, lng: number): 
   const tempF = tempC * (9 / 5) + 32;
   const countryCodeFromWeather = data.sys?.country;
 
-  let countryCode = countryCodeFromWeather;
+  let countryCode = countryCodeFromWeather ?? options?.countryCodeOverride ?? undefined;
   let region: string | undefined;
   let city = data.name;
 
