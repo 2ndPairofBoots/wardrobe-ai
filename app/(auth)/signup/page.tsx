@@ -15,38 +15,44 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
 
   async function signupWithGoogle() {
     "use server";
+    const supabase = createClient();
+
+    const headerList = headers();
+    const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+    const proto = headerList.get("x-forwarded-proto") ?? "http";
+    const origin = host
+      ? `${proto}://${host}`
+      : process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+    // Keep redirectTo as simple + exact as possible to match Supabase "allowed redirect URLs".
+    const callbackUrl = `${origin}/auth/callback`;
+
+    let data: { url?: string } | null = null;
+    let oauthError: { message?: string; name?: string } | null = null;
 
     try {
-      const supabase = createClient();
-      const headerList = headers();
-      const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
-      const proto = headerList.get("x-forwarded-proto") ?? "http";
-      const origin = host
-        ? `${proto}://${host}`
-        : process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-      // Keep redirectTo as simple + exact as possible to match Supabase "allowed redirect URLs".
-      const callbackUrl = `${origin}/auth/callback`;
-      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+      const result = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: callbackUrl,
         },
       });
 
-      if (oauthError || !data?.url) {
-        const msg = oauthError?.message ?? oauthError?.name ?? "Unable to start Google sign-up.";
-        redirect(`/signup?error=${encodeURIComponent(String(msg))}`);
-      }
-
-      redirect(data.url);
+      data = (result as { data?: { url?: string } })?.data ?? null;
+      oauthError = (result as { error?: { message?: string; name?: string } }).error ?? null;
     } catch (err) {
-      // Next.js throws a special error for `redirect()`. Do not intercept it.
-      const digest = typeof err === "object" && err !== null ? (err as { digest?: unknown }).digest : undefined;
-      if (digest === "NEXT_REDIRECT") throw err;
+      oauthError = {
+        message: err instanceof Error ? err.message : "Unable to start Google sign-up.",
+        name: err instanceof Error ? err.name : undefined,
+      };
+    }
 
-      const msg = err instanceof Error ? err.message : "Unable to start Google sign-up.";
+    if (oauthError || !data?.url) {
+      const msg = oauthError?.message ?? oauthError?.name ?? "Unable to start Google sign-up.";
       redirect(`/signup?error=${encodeURIComponent(String(msg))}`);
     }
+
+    redirect(data.url);
   }
 
   async function signup(formData: FormData) {
