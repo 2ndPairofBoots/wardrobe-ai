@@ -57,7 +57,7 @@ export function GoogleSignInButton({ redirectTo, flow = "login" }: GoogleSignInB
   const [error, setError] = useState<string | null>(null);
   const googleClientId = getClientId();
   const oauthFallbackUrl = `/api/auth/google-oauth/start?next=${encodeURIComponent(redirectTo)}&flow=${encodeURIComponent(flow)}`;
-  const label = flow === "signup" ? "Sign up with Google" : "Log in with Google";
+  const label = flow === "signup" ? "Sign up with Google" : "Sign in with Google";
 
   useEffect(() => {
     if (!googleClientId) return;
