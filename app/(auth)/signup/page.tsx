@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
@@ -17,8 +18,12 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
 
     try {
       const supabase = createClient();
-      const origin =
-        process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+      const headerList = headers();
+      const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+      const proto = headerList.get("x-forwarded-proto") ?? "http";
+      const origin = host
+        ? `${proto}://${host}`
+        : process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
       // Keep redirectTo as simple + exact as possible to match Supabase "allowed redirect URLs".
       const callbackUrl = `${origin}/auth/callback`;
       const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
