@@ -20,12 +20,23 @@ type OpenWeatherReverseItem = {
 
 export type CurrentWeather = {
   tempC: number;
+  tempF: number;
+  /** Temperature converted for display (depends on `unit`). */
+  temp: number;
+  unit: "C" | "F";
   conditions: string;
   city?: string;
   countryCode?: string;
   /** State / province when provided by geocoder (e.g. GA, ON). */
   region?: string;
 };
+
+function isImperialCountry(countryCode?: string | null): boolean {
+  // Common convention: US, Liberia, and Myanmar use imperial (°F).
+  // Everything else defaults to metric (°C).
+  const code = countryCode?.toUpperCase();
+  return code === "US" || code === "LR" || code === "MM";
+}
 
 /**
  * OpenWeather's /data/2.5/weather `name` field is often a regional hub or station city,
@@ -45,7 +56,9 @@ async function reverseGeocodeLocality(
   try {
     const response = await fetch(url.toString(), {
       method: "GET",
-      cache: "no-store",
+        // Weather/geo data doesn't need to be real-time for homepage display.
+        cache: "force-cache",
+        next: { revalidate: 60 * 60 }, // 1 hour
     });
     if (!response.ok) return {};
     const data = (await response.json()) as OpenWeatherReverseItem[];
@@ -73,13 +86,13 @@ export async function getCurrentWeatherByCoordinates(lat: number, lng: number): 
   weatherUrl.searchParams.set("appid", apiKey);
   weatherUrl.searchParams.set("units", "metric");
 
-  const [weatherResponse, locality] = await Promise.all([
-    fetch(weatherUrl.toString(), {
-      method: "GET",
-      cache: "no-store",
-    }),
-    reverseGeocodeLocality(lat, lng, apiKey),
-  ]);
+  // Fast path: rely on /weather's `sys.country` + `name` to determine units and display label.
+  // Reverse geocoding is only used as a fallback when the country is missing.
+  const weatherResponse = await fetch(weatherUrl.toString(), {
+    method: "GET",
+    cache: "force-cache",
+    next: { revalidate: 5 * 60 }, // 5 minutes
+  });
 
   if (!weatherResponse.ok) {
     throw new Error("Failed to fetch weather.");
@@ -94,12 +107,30 @@ export async function getCurrentWeatherByCoordinates(lat: number, lng: number): 
     throw new Error("Invalid weather response.");
   }
 
-  const city = locality.city ?? data.name;
-  const countryCode = locality.countryCode ?? data.sys?.country;
-  const region = locality.region;
+  const tempC = temp;
+  const tempF = tempC * (9 / 5) + 32;
+  const countryCodeFromWeather = data.sys?.country;
+
+  let countryCode = countryCodeFromWeather;
+  let region: string | undefined;
+  let city = data.name;
+
+  // Fallback for missing country code (rare).
+  if (!countryCode) {
+    const locality = await reverseGeocodeLocality(lat, lng, apiKey);
+    countryCode = locality.countryCode;
+    region = locality.region;
+    city = locality.city ?? city;
+  }
+
+  const unit: "C" | "F" = isImperialCountry(countryCode) ? "F" : "C";
+  const tempDisplay = unit === "F" ? tempF : tempC;
 
   return {
-    tempC: temp,
+    tempC,
+    tempF,
+    temp: tempDisplay,
+    unit,
     conditions,
     city,
     countryCode,

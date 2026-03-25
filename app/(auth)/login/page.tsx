@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
@@ -16,10 +15,9 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   const message = searchParams?.message;
 
   function buildCallbackUrl() {
-    const headerList = headers();
-    const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
-    const proto = headerList.get("x-forwarded-proto") ?? "http";
-    const origin = host ? `${proto}://${host}` : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    // Avoid relying on request headers inside server actions; use a configured public origin instead.
+    const origin =
+      process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
     return `${origin}/auth/callback?next=/dashboard&flow=login`;
   }
@@ -27,22 +25,26 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   async function loginWithGoogle() {
     "use server";
 
-    const supabase = createClient();
-    const callbackUrl = buildCallbackUrl();
-    const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: callbackUrl,
-        // When the user is already logged into Google, this makes the sign-in happen without an extra Google prompt.
-        queryParams: { prompt: "none" },
-      },
-    });
+    try {
+      const supabase = createClient();
+      const callbackUrl = buildCallbackUrl();
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: callbackUrl,
+          // When the user is already logged into Google, this makes the sign-in happen without an extra Google prompt.
+          queryParams: { prompt: "none" },
+        },
+      });
 
-    if (oauthError || !data.url) {
+      if (oauthError || !data?.url) {
+        redirect("/login?error=Unable%20to%20start%20Google%20sign-in.");
+      }
+
+      redirect(data.url);
+    } catch {
       redirect("/login?error=Unable%20to%20start%20Google%20sign-in.");
     }
-
-    redirect(data.url);
   }
 
   async function login(formData: FormData) {

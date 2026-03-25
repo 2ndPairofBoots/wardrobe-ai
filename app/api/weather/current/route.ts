@@ -25,10 +25,17 @@ export async function GET(request: Request) {
       );
     }
 
-    const weather = await getCurrentWeatherByCoordinates(lat, lng);
+    // Quantize coordinates to increase cache hits and make homepage load faster.
+    const latQ = Math.round(lat * 100) / 100; // ~1km
+    const lngQ = Math.round(lng * 100) / 100;
+
+    const weather = await getCurrentWeatherByCoordinates(latQ, lngQ);
 
     return NextResponse.json({
       temp_c: weather.tempC,
+      temp_f: weather.tempF,
+      temp: weather.temp,
+      unit: weather.unit,
       conditions: weather.conditions,
       city: weather.city ?? null,
       country_code: weather.countryCode ?? null,

@@ -92,6 +92,20 @@ export default function Home() {
   });
 
   useEffect(() => {
+    const cacheKey = "landingWeather:v1";
+    const cachedRaw = typeof window !== "undefined" ? window.localStorage.getItem(cacheKey) : null;
+    if (cachedRaw) {
+      try {
+        const cached = JSON.parse(cachedRaw) as { ts: number; locationLabel: string; weatherLabel: string };
+        const ageMs = Date.now() - cached.ts;
+        if (Number.isFinite(ageMs) && ageMs >= 0 && ageMs < 20 * 60 * 1000) {
+          setLandingWeather({ locationLabel: cached.locationLabel, weatherLabel: cached.weatherLabel });
+        }
+      } catch {
+        // Ignore cache parse errors.
+      }
+    }
+
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       setLandingWeather({
         locationLabel: "Location unavailable",
@@ -106,24 +120,31 @@ export default function Home() {
       try {
         const response = await fetch(`/api/weather/current?lat=${latitude}&lng=${longitude}`);
         const json = (await response.json()) as {
+          temp?: number;
+          unit?: "C" | "F";
           temp_c?: number;
+          temp_f?: number;
           conditions?: string;
           city?: string | null;
           country_code?: string | null;
           region?: string | null;
         };
 
-        if (!response.ok || typeof json.temp_c !== "number") {
+        if (!response.ok || typeof json.temp !== "number" || (json.unit !== "C" && json.unit !== "F")) {
           throw new Error("Unable to load weather");
         }
 
         const location = json.city
           ? [json.city, json.region || json.country_code].filter(Boolean).join(", ")
           : "";
-        setLandingWeather({
+
+        const next = {
           locationLabel: location || "Nearby",
-          weatherLabel: `${Math.round(json.temp_c)}°C · ${json.conditions ?? "—"}`,
-        });
+          weatherLabel: `${Math.round(json.temp)}°${json.unit} · ${json.conditions ?? "—"}`,
+        };
+
+        setLandingWeather(next);
+        window.localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), ...next }));
       } catch {
         setLandingWeather({
           locationLabel: "Nearby",
@@ -141,8 +162,8 @@ export default function Home() {
 
     navigator.geolocation.getCurrentPosition(onSuccess, onError, {
       enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 300000,
+      timeout: 5000,
+      maximumAge: 10 * 60 * 1000,
     });
   }, []);
 
