@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
-import { GoogleSignInButton } from "./GoogleSignInButton";
+import { GoogleSignInButton } from "../GoogleSignInButton";
 
 type LoginPageProps = {
   searchParams?: {
