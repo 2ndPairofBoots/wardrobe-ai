@@ -19,7 +19,7 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
     const proto = headerList.get("x-forwarded-proto") ?? "http";
     const origin = host ? `${proto}://${host}` : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-    return `${origin}/auth/callback?next=/dashboard`;
+    return `${origin}/auth/callback?next=/dashboard&flow=signup`;
   }
 
   async function signupWithGoogle() {
@@ -31,6 +31,8 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
       provider: "google",
       options: {
         redirectTo: callbackUrl,
+        // When the user is already logged into Google, this makes the sign-in happen without an extra Google prompt.
+        queryParams: { prompt: "none" },
       },
     });
 
