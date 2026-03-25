@@ -19,7 +19,8 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
       const supabase = createClient();
       const origin =
         process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-      const callbackUrl = `${origin}/auth/callback?next=/dashboard`;
+      // Keep redirectTo as simple + exact as possible to match Supabase "allowed redirect URLs".
+      const callbackUrl = `${origin}/auth/callback`;
       const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
