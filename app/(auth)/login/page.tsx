@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 
 type LoginPageProps = {
   searchParams?: {
@@ -14,48 +14,6 @@ type LoginPageProps = {
 export default function LoginPage({ searchParams }: LoginPageProps) {
   const error = searchParams?.error;
   const message = searchParams?.message;
-
-  async function loginWithGoogle() {
-    "use server";
-    const supabase = createClient();
-
-    const headerList = headers();
-    const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
-    const proto = headerList.get("x-forwarded-proto") ?? "http";
-    const origin = host
-      ? `${proto}://${host}`
-      : process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
-    // Keep redirectTo as simple + exact as possible to match Supabase "allowed redirect URLs".
-    const callbackUrl = `${origin}/auth/callback`;
-
-    let data: { url?: string } | null = null;
-    let oauthError: { message?: string; name?: string } | null = null;
-
-    try {
-      const result = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: callbackUrl,
-        },
-      });
-
-      data = (result as { data?: { url?: string } })?.data ?? null;
-      oauthError = (result as { error?: { message?: string; name?: string } }).error ?? null;
-    } catch (err) {
-      oauthError = {
-        message: err instanceof Error ? err.message : "Unable to start Google sign-in.",
-        name: err instanceof Error ? err.name : undefined,
-      };
-    }
-
-    if (oauthError || !data?.url) {
-      const msg = oauthError?.message ?? oauthError?.name ?? "Unable to start Google sign-in.";
-      redirect(`/login?error=${encodeURIComponent(String(msg))}`);
-    }
-
-    redirect(data.url);
-  }
 
   async function login(formData: FormData) {
     "use server";
@@ -134,11 +92,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <form action={loginWithGoogle}>
-            <Button type="submit" variant="secondary" size="md" loading={false} className="w-full">
-              Continue with Google
-            </Button>
-          </form>
+          <GoogleSignInButton redirectTo="/dashboard" />
 
           <p className="mt-4 text-sm text-muted-foreground">
             No account yet?{" "}
