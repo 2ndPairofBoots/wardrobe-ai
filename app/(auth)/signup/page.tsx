@@ -34,12 +34,14 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
       });
 
       if (oauthError || !data?.url) {
-        redirect("/signup?error=Unable%20to%20start%20Google%20sign-up.");
+        const msg = oauthError?.message ?? oauthError?.name ?? "Unable to start Google sign-up.";
+        redirect(`/signup?error=${encodeURIComponent(String(msg))}`);
       }
 
       redirect(data.url);
-    } catch {
-      redirect("/signup?error=Unable%20to%20start%20Google%20sign-up.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unable to start Google sign-up.";
+      redirect(`/signup?error=${encodeURIComponent(String(msg))}`);
     }
   }
 
