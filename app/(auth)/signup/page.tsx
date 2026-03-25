@@ -90,7 +90,7 @@ export default function SignupPage({ searchParams }: SignupPageProps) {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <GoogleSignInButton redirectTo="/dashboard" />
+          <GoogleSignInButton redirectTo="/dashboard" flow="signup" />
 
           <p className="mt-4 text-sm text-muted-foreground">
             Already have an account?{" "}

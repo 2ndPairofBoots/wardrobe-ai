@@ -92,7 +92,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <GoogleSignInButton redirectTo="/dashboard" />
+          <GoogleSignInButton redirectTo="/dashboard" flow="login" />
 
           <p className="mt-4 text-sm text-muted-foreground">
             No account yet?{" "}

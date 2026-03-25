@@ -23,16 +23,18 @@ declare global {
 
 type GoogleSignInButtonProps = {
   redirectTo: string;
+  flow?: "login" | "signup";
 };
 
 function getClientId(): string | undefined {
   return process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 }
 
-export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ redirectTo, flow = "login" }: GoogleSignInButtonProps) {
   const supabase = useMemo(() => createClient(), []);
   const [error, setError] = useState<string | null>(null);
   const googleClientId = getClientId();
+  const oauthFallbackUrl = `/api/auth/google-oauth/start?next=${encodeURIComponent(redirectTo)}&flow=${encodeURIComponent(flow)}`;
 
   useEffect(() => {
     if (!googleClientId) return;
@@ -114,7 +116,11 @@ export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
         className="w-full"
         onClick={() => {
           try {
-            if (!googleClientId) return;
+            if (!googleClientId) {
+              window.location.href = oauthFallbackUrl;
+              return;
+            }
+
             if (window.google?.accounts?.id) {
               // Show the One Tap / account chooser.
               window.google.accounts.id.prompt();
