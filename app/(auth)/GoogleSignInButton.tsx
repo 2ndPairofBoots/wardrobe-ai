@@ -6,7 +6,18 @@ import { createClient } from "@/lib/supabase/client";
 
 declare global {
   interface Window {
-    google?: any;
+    google?: {
+      accounts?: {
+        id?: {
+          initialize: (config: {
+            client_id: string;
+            auto_select?: boolean;
+            callback: (response: { credential?: string }) => void;
+          }) => void;
+          prompt: () => void;
+        };
+      };
+    };
   }
 }
 
@@ -28,9 +39,10 @@ export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
 
     const maybeInit = () => {
       if (!window.google?.accounts?.id) return false;
+      const googleId = window.google.accounts.id;
 
       // Initialize Google Identity Services.
-      window.google.accounts.id.initialize({
+      googleId.initialize({
         client_id: googleClientId,
         auto_select: true,
         callback: async (response: { credential?: string }) => {
@@ -41,7 +53,13 @@ export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
           }
 
           // Exchange Google ID token for a Supabase session.
-          const { error: signInError } = await (supabase.auth as any).signInWithIdToken({
+          const authWithIdToken = supabase.auth as unknown as {
+            signInWithIdToken: (args: { provider: "google"; token: string }) => Promise<{
+              error: { message?: string } | null;
+            }>;
+          };
+
+          const { error: signInError } = await authWithIdToken.signInWithIdToken({
             provider: "google",
             token,
           });
@@ -56,7 +74,7 @@ export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
       });
 
       // Triggers automatic sign-in if the user already has a Google session.
-      window.google.accounts.id.prompt();
+      googleId.prompt();
       return true;
     };
 
@@ -75,7 +93,7 @@ export function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
 
     // If the script was already loaded, try initializing immediately.
     maybeInit();
-  }, [redirectTo, supabase]);
+  }, [googleClientId, redirectTo, supabase]);
 
   return (
     <div>
