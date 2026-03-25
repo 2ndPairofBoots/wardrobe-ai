@@ -37,6 +37,10 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 
       redirect(data.url);
     } catch (err) {
+      // Next.js throws a special error for `redirect()`. Do not intercept it.
+      const digest = typeof err === "object" && err !== null ? (err as { digest?: unknown }).digest : undefined;
+      if (digest === "NEXT_REDIRECT") throw err;
+
       const msg = err instanceof Error ? err.message : "Unable to start Google sign-in.";
       redirect(`/login?error=${encodeURIComponent(String(msg))}`);
     }
