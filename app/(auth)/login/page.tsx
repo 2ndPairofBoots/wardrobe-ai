@@ -14,20 +14,14 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   const error = searchParams?.error;
   const message = searchParams?.message;
 
-  function buildCallbackUrl() {
-    // Avoid relying on request headers inside server actions; use a configured public origin instead.
-    const origin =
-      process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
-    return `${origin}/auth/callback?next=/dashboard`;
-  }
-
   async function loginWithGoogle() {
     "use server";
 
     try {
       const supabase = createClient();
-      const callbackUrl = buildCallbackUrl();
+      const origin =
+        process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+      const callbackUrl = `${origin}/auth/callback?next=/dashboard`;
       const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
